@@ -1,0 +1,47 @@
+# JAGS model for...
+# Optimal observer for cued localisation task
+
+
+model{
+
+	# create uniform prior for dirichlet...
+	#for (n in 1:N){
+	#	dirchprior[n] <- 1
+	#}
+	# or maybe this works
+	#dirchprior[1:N] <-1
+
+
+
+	# define a single location distribution from which locations are sampled from
+	# when generating data, this is an observed node
+	#pdist ~ ddirch(dirchprior)
+
+	for (t in 1:T){
+
+		# sample locations from the location distribution
+		L[t] ~ dcat(pdist)
+
+		# sample locations directly from a uniform
+		#L[t] ~ dcat(uniformdist)
+
+		# Generate stimuli
+		for (n in 1:N){	
+			# decide true stimulus values
+			theta[n,t] <- ifelse(n==L[t],1,0)
+
+			# observed 
+			x[n,t] ~ dnorm(theta[n,t] , 1/variance)
+  		}
+
+		# Generate probability vector that the cue is drawn from
+		for (n in 1:N){	
+			#cue_distribution[n,t] <- ifelse(n==L[t],v[1],v[2])
+			cue_distribution[n,t] <- ifelse(n==L[t], v, (1-v)/(N-1))
+  		}
+
+  		# now decide cue location by drawing a sample from the cue_distribution
+		c[t] ~ dcat(cue_distribution[,t])
+
+	}
+}

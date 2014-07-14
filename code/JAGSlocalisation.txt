@@ -1,0 +1,16 @@
+# JAGS model for...
+# Optimal observer for localisation task (not cued localisation)
+
+model{
+	for (t in 1:T){
+		# sample locations from the location distribution
+		L[t] ~ dcat(pdist)
+		# Generate stimuli
+		for (n in 1:N){	
+			# decide true stimulus values
+			theta[n,t] <- ifelse(n==L[t],1,0)
+			# observed 
+			x[n,t] ~ dnorm(theta[n,t] , 1/variance)
+  		}
+	}
+}

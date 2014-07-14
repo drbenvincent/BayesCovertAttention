@@ -1,0 +1,20 @@
+# JAGS model for optimal observer detection
+model{
+for (t in 1:T) {
+
+	for (n in 1:N){
+		# specify stimulus values as a function of display type on this trial(L[t])
+		theta[n,t] <- equals(n,L[t])
+		
+		# define the sensory noise variance associated with each stimulus
+		vars[n,t] <- ifelse(n==L[t],varT,varD)
+		
+		# generate a noisy sensory observation of those stimulus values
+		x[n,t] ~ dnorm( theta[n,t] , 1/(vars[n,t]) )
+  	}
+
+	# prior over L, supplied by user (i.e. an observed quantity)
+	L[t] ~ dcat(Lprior)
+
+	}
+}
