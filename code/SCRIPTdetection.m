@@ -15,6 +15,11 @@
 %function SCRIPTdetection(run_type)
 %% Preliminaries
 clear, close all; clc
+% add paths to dependencies
+addpath([cd '/funcs'])
+addpath([cd '/funcs/export_fig'])
+addpath([cd '/funcs/latex_fig'])
+% are we doing a quick run, or a proper long run?
 run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
 
@@ -173,7 +178,11 @@ title('Search asymmetry','FontSize',16)
 
 
 
-
+%% report time taken doing job
+T2=clock;
+etime(T2,T1)	% time in seconds
+etime(T2,T1)/60 % time in mins
+min_sec(etime(T2,T1));
 
 
 
@@ -210,8 +219,3 @@ end
 export_fig results_detection -png -pdf -m1
 cd(codedir)
 
-%% report time taken doing job
-T2=clock;
-etime(T2,T1)	% time in seconds
-etime(T2,T1)/60 % time in mins
-min_sec(etime(T2,T1));

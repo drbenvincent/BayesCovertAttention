@@ -13,6 +13,12 @@
 %function SCRIPTcuedLocalisation(run_type)
 %% Preliminaries
 clear, close all; clc
+% add paths to dependencies
+addpath([cd '/funcs'])
+addpath([cd '/funcs/export_fig'])
+addpath([cd '/funcs/latex_fig'])
+addpath([cd '/funcs/hline_vline'])
+% are we doing a quick run, or a proper long run?
 run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
 
