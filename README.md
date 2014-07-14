@@ -1,7 +1,7 @@
 # BayesCovertAttention
 
 
-Code associated with the paper **Vincent (submitted) Bayesian accounts of covert selective attention: a tutorial review**.
+Code associated with the paper **Vincent (submitted) [Bayesian accounts of covert selective attention: a tutorial review]()**.
 
 ## How to run the code
 To run the models, set the `code` folder as the current directory in Matlab. Then run these files:
