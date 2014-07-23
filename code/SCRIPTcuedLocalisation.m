@@ -12,7 +12,7 @@
 
 %function SCRIPTcuedLocalisation(run_type)
 %% Preliminaries
-clear, close all; clc
+clear, %close all; clc
 % add paths to dependencies
 addpath([cd '/funcs'])
 addpath([cd '/funcs/export_fig'])
@@ -28,8 +28,8 @@ T1=clock;
 
 switch run_type
     case{'testing'}
-        TRIALS				= 100; % number of trials to simulate it any one run
-        cue_validity_list	= linspace(0,1,5);
+        TRIALS				= 500; % number of trials to simulate it any one run
+        cue_validity_list	= linspace(0.01,1-0.01,5);
         variance_list		= 1./[4  1  0.25];
         
     case{'publication'}
