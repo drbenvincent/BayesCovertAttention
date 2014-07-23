@@ -20,7 +20,7 @@ params.uniformdist      = ones(N,1)./N; % uniform distribution
 % params.dirchprior = ones(N,1);
 
 % for generating the data, we specify the distribution from which L is sampled from
-params.pdist			= ones(N,1)./N; 
+%params.pdist			= ones(N,1)./N;
 % create uninformative prior for dirichlet distribution
 % params.dirchprior 		= ones(N,1);
 
@@ -32,22 +32,22 @@ params.pdist			= ones(N,1)./N;
 
 % Set initial values for latent variable in each chain
 for i=1:mcmcparams.generate.nchains
-	%initial_param(i).L			= randi(params.N);
-	
-		% The guess initial parameter value for L cannot equal a location who's
-	% spatial prior is equal to zero, otherwise we get an error message
-	% from JAGS.
-
-	initial_param(i).L = round( ( rand*(N-1)) +1);
-	
-% 	done=0;
-%  	while done~=1
-% 		tempLocation = round( ( rand*(N-1)) +1);
-%  		if params.v(tempLocation) ~=0
-%  			initial_param(i).L = tempLocation;
-%  			done=1;
-% 		end	
-%  	end
+    %initial_param(i).L			= randi(params.N);
+    
+    % The guess initial parameter value for L cannot equal a location who's
+    % spatial prior is equal to zero, otherwise we get an error message
+    % from JAGS.
+    
+    initial_param(i).L = round( ( rand*(N-1)) +1);
+    
+    % 	done=0;
+    %  	while done~=1
+    % 		tempLocation = round( ( rand*(N-1)) +1);
+    %  		if params.v(tempLocation) ~=0
+    %  			initial_param(i).L = tempLocation;
+    %  			done=1;
+    % 		end
+    %  	end
 end
 
 %%
@@ -55,20 +55,20 @@ end
 %fprintf( 'Running JAGS...\n' );
 %tic
 [dataset, stats, structArray] = matjags( ...
-    params, ...                 
-    fullfile(pwd, JAGSmodel), ...   
-    initial_param, ...                     
-    'doparallel' , mcmcparams.doparallel, ...      
-    'nchains', mcmcparams.generate.nchains,...              
-    'nburnin', mcmcparams.generate.nburnin,...             
-    'nsamples', mcmcparams.generate.nsamples, ...           
-    'thin', 1, ...                      
-    'monitorparams', {'c','L','x','pdist'}, ...    
-    'savejagsoutput' , 0 , ...   
-    'verbosity' , 0 , ...              
+    params, ...
+    fullfile(pwd, JAGSmodel), ...
+    initial_param, ...
+    'doparallel' , mcmcparams.doparallel, ...
+    'nchains', mcmcparams.generate.nchains,...
+    'nburnin', mcmcparams.generate.nburnin,...
+    'nsamples', mcmcparams.generate.nsamples, ...
+    'thin', 1, ...
+    'monitorparams', {'c','L','x'}, ...
+    'savejagsoutput' , 0 , ...
+    'verbosity' , 0 , ...
     'cleanup' , 1 ,...
     'rndseed',1,...
-	'dic',0);                    
+    'dic',0);
 
 
 clear initial_param
@@ -89,13 +89,13 @@ true_location = squeeze(dataset.L);
 %% STEP 2: INFER THE TRIAL TYPE GIVEN THE SENSORY OBSERVATIONS
 % Now do inference on ALL the generated data
 
-% now we MAY OR MAY NOT want to remove knowledge that L is sampled from a uniform distribution over each location (pdist=[1/N ... 1/N]) 
+% now we MAY OR MAY NOT want to remove knowledge that L is sampled from a uniform distribution over each location (pdist=[1/N ... 1/N])
 %params = rmfield(params, 'pdist')
 
 %%
 % update some of the parameters
 params.x		= squeeze(dataset.x)';
-params.T		= TRIALS; 
+params.T		= TRIALS;
 params.c		= squeeze(dataset.c)';
 
 %%
@@ -108,64 +108,73 @@ params.c		= squeeze(dataset.c)';
 % for i=1:mcmcparams.infer.nchains
 % 	initial_param(i).L			= randi(params.N, TRIALS,1);
 % end
-for i=1:mcmcparams.infer.nchains
-	%initial_param(i).L			= randi(params.N, TRIALS,1);
-	for t=1:TRIALS
-		
-		%initial_param(i).L(t) = round( ( rand*(N-1)) +1);
-		
-		% We need the initial parameter guess for L to NOT be in a location
-		% where the target cannot be. For example, if the cue validity is
-		% zero and the cue is observed in location 1, then we need the
-		% initial guess of L to be anything other than 1.
-		
-		% L
-		done=0;
-		while done~=1
-			% calculate cue distribution
-			cue_dist=ones(N,1)* (1-cue_validity)/(N-1);
-			cue_dist(params.c(t)) = cue_validity;
-			
-			tempLocation = round( (rand*(params.N-1)) +1);
-			if cue_dist(tempLocation) ~=0
-				initial_param(i).L(t) = tempLocation;
-				done=1;
-			end
-		end
-% 		
-% 		% c
-% 		done=0;
-% 		while done~=1
-% 			tempLocation = round( (rand*(params.N-1)) +1);
-% 			if params.pdist(tempLocation) ~=1
-% 				initial_param(i).c(t) = tempLocation;
-% 				done=1;
-% 			end
-% 		end
-		
-		%initial_param(i).L(t) = round( (rand*(params.N-1)) +1);
 
-	end
+for i=1:mcmcparams.infer.nchains
+    initial_param(i).L			= randi(params.N, TRIALS,1);
 end
+    
+% for i=1:mcmcparams.infer.nchains
+%     initial_param(i)=0;
+%     %initial_param(i).L			= randi(params.N, TRIALS,1);
+% %     for t=1:TRIALS
+% %         for n=1:N
+% %             initial_param(i).x(n,t) = [];
+% %         end
+% %         
+% %         % 		%initial_param(i).L(t) = round( ( rand*(N-1)) +1);
+% %         %
+% %         % 		% We need the initial parameter guess for L to NOT be in a location
+% %         % 		% where the target cannot be. For example, if the cue validity is
+% %         % 		% zero and the cue is observed in location 1, then we need the
+% %         % 		% initial guess of L to be anything other than 1.
+% %         %
+% %         % 		% L
+% %         % 		done=0;
+% %         % 		while done~=1
+% %         % % 			% calculate cue distribution
+% %         % % 			cue_dist=ones(N,1)* (1-cue_validity)/(N-1);
+% %         % % 			cue_dist(params.c(t)) = cue_validity;
+% %         %
+% %         % 			tempLocation = round( (rand*(params.N-1)) +1);
+% %         % 			if cue_dist(tempLocation) ~=0
+% %         % 				initial_param(i).L(t) = tempLocation;
+% %         % 				done=1;
+% %         % 			end
+% %         % 		end
+% %         % %
+% %         % % 		% c
+% %         % % 		done=0;
+% %         % % 		while done~=1
+% %         % % 			tempLocation = round( (rand*(params.N-1)) +1);
+% %         % % 			if params.pdist(tempLocation) ~=1
+% %         % % 				initial_param(i).c(t) = tempLocation;
+% %         % % 				done=1;
+% %         % % 			end
+% %         % % 		end
+% %         %
+% %         % 		%initial_param(i).L(t) = round( (rand*(params.N-1)) +1);
+% %         
+% %     end
+% end
 
 %%
 % Calling JAGS to sample
 %fprintf( 'Running JAGS...\n' );
 %tic
 [samples, stats, structArray] = matjags( ...
-    params, ...                       
-    fullfile(pwd, JAGSmodel), ...    
-    initial_param, ...                          
-    'doparallel' , mcmcparams.doparallel, ...      
-    'nchains', mcmcparams.infer.nchains,...             
-    'nburnin', mcmcparams.infer.nburnin,...             
-    'nsamples', mcmcparams.infer.nsamples, ...           
-    'thin', 1, ...                      
-    'monitorparams', {'L','pdist'}, ...  
-    'savejagsoutput' , 0 , ... 
-    'verbosity' , 0 , ... 
+    params, ...
+    fullfile(pwd, JAGSmodel), ...
+    initial_param, ...
+    'doparallel' , mcmcparams.doparallel, ...
+    'nchains', mcmcparams.infer.nchains,...
+    'nburnin', mcmcparams.infer.nburnin,...
+    'nsamples', mcmcparams.infer.nsamples, ...
+    'thin', 1, ...
+    'monitorparams', {'L',}, ...
+    'savejagsoutput' , 0 , ...
+    'verbosity' , 0 , ...
     'cleanup' , 1 ,...
-    'rndseed',1); 
+    'rndseed',1);
 %min_sec(toc);
 
 
@@ -174,7 +183,7 @@ end
 % (proportion correct, |PC|).
 
 for t=1:TRIALS
-	L(t)		= mode( vec(samples.L(:,:,t)) );
+    L(t)		= mode( vec(samples.L(:,:,t)) );
 end
 
 % Examine the performance of the optimal observer
