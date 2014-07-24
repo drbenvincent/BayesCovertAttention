@@ -19,6 +19,7 @@ clear, close all; clc
 addpath([cd '/funcs'])
 addpath([cd '/funcs/export_fig'])
 addpath([cd '/funcs/latex_fig'])
+addpath([cd '/funcs/ColorBand'])
 plot_formatting_setup
 % are we doing a quick run, or a proper long run?
 run_type = 'testing'; % ['testing'|'publication']
@@ -30,7 +31,7 @@ T1=clock;
 
 switch run_type
     case{'testing'}
-        TRIALS              = 100;
+        TRIALS              = 1000;
         list_of_variances   = 1./[4 1 0.25];
         dprime              = 1./list_of_variances;
         size_sizes          = [2 4 8];
@@ -57,8 +58,13 @@ end
 
 %%
 % Plot the results
+
+ColorSet = ColorBand(numel(list_of_variances)); % define line colours
+
 figure(1)
 subplot(1,3,1)
+hold all 
+set(gca, 'ColorOrder', ColorSet); 
 plot(FAR,HR)
 format_axis_ROC
 % Axis properties
@@ -68,6 +74,7 @@ set(gca, ...
 legend('4, 1', '1, 4')
 legend(num2str(dprime'),...
 	'location','SouthEast')
+legend boxoff
 title('Target/Distracter similarity','FontSize',16)
 
 
@@ -99,7 +106,10 @@ end
 % Plot the results
 figure(1)
 subplot(1,3,2)
-plot(size_sizes,AUC,'-o')
+hold all 
+set(gca, 'ColorOrder', ColorSet); 
+plot(size_sizes,AUC,'.-',...
+    'MarkerSize', 30)
 xlabel('set size')
 ylabel('AUC')
 axis square
@@ -107,7 +117,8 @@ axis([1 max(size_sizes) 0.5 1])
 set(gca,'XTick',size_sizes)
 box off
 legend(num2str(dprime'),...
-	'location','SouthEast')
+	'location','NorthEast')
+legend boxoff
 title('Set size effects','FontSize',16)
 
 
@@ -140,13 +151,16 @@ figure(1)
 subplot(1,3,3)
 plot(AB_FAR,AB_HR,'k')
 hold on
-plot(BA_FAR,BA_HR,'k--')
+plot(BA_FAR,BA_HR,'k:')
 format_axis_ROC
 % Axis properties
 set(gca, ...
   'XTick'       , 0:0.25:1	, ...
   'YTick'       , 0:0.25:1);
-legend('4, 1', '1, 4')
+legend('\sigma^2_T = 4, \sigma^2_D = 1',...
+    '\sigma^2_T = 1, \sigma^2_D = 4',...
+    'location','SouthEast')
+legend boxoff
 title('Search asymmetry','FontSize',16)
 
 
