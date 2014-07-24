@@ -29,7 +29,8 @@ figure(1)
 
 subplot(1,2,subfig)
 hold on
-plot( cue_validity_list.*100 , PC, 'k-o','LineWidth',2)
+plot( cue_validity_list.*100 , PC, '.-k',...
+    'LineWidth', 2, 'MarkerSize', 20)
 hline(1/N)
 ylim([0 1])
 xlabel('expectation (%)')
@@ -37,9 +38,10 @@ ylabel('percent correct')
 set(gca,'XTick',[0:25:100])
 box off
 axis square
-legend(num2str(dprime'),...
-	'location','SouthEast')
-title(['N=' num2str(N)],'FontSize',16)
+% legend(num2str(dprime'),...
+% 	'location','SouthEast')
+% legend boxoff
+title(['set size = ' num2str(N)],'FontSize',16)
 drawnow
 
 

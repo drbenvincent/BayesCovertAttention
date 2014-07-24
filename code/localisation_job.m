@@ -28,9 +28,17 @@ end
 
 %%
 % Plot the results
+
 figure(1)
+
+ColorSet = ColorBand(numel(variance_list)); % define line colours
+
 subplot(1,2,subfig)
-plot( sp_list.*100 , PC, '-o','LineWidth',6)
+hold all 
+set(gca, 'ColorOrder', ColorSet); 
+plot( sp_list.*100 , PC, '.-',...
+    'LineWidth', 10,...
+    'MarkerSize', 50)
 hline(1/N)
 
 % formatting
@@ -42,16 +50,17 @@ set(gca,'PlotBoxAspectRatio',[1 1 1],...
     'YTick',[0:0.25:1])
 xlabel('expectation (%)')
 ylabel('proportion correct')
-title(['N=' num2str(N)],'FontSize',16)
-legend(num2str(dprime'),...
-	'location','SouthEast')
+title(['set size = ' num2str(N)],'FontSize',16)
+% legend
+h = legend(num2str(dprime'),...
+	'location','SouthEast');
+legend boxoff
+% v = get(h,'title');
+% set(v,'string','\sigma^2');
+
 axis square
 
 drawnow
-
-
-
-
 
 
 return

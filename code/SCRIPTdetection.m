@@ -19,6 +19,7 @@ clear, close all; clc
 addpath([cd '/funcs'])
 addpath([cd '/funcs/export_fig'])
 addpath([cd '/funcs/latex_fig'])
+plot_formatting_setup
 % are we doing a quick run, or a proper long run?
 run_type = 'testing'; % ['testing'|'publication']
 T1=clock;

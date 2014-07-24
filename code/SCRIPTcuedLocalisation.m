@@ -18,6 +18,7 @@ addpath([cd '/funcs'])
 addpath([cd '/funcs/export_fig'])
 addpath([cd '/funcs/latex_fig'])
 addpath([cd '/funcs/hline_vline'])
+%addpath([cd '/funcs/ColorBand'])
 % are we doing a quick run, or a proper long run?
 run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
@@ -28,7 +29,7 @@ T1=clock;
 
 switch run_type
     case{'testing'}
-        TRIALS				= 500; % number of trials to simulate it any one run
+        TRIALS				= 100; % number of trials to simulate it any one run
         cue_validity_list	= linspace(0.001,1-0.001,5);
         variance_list		= 1./[4  1  0.25];
         
