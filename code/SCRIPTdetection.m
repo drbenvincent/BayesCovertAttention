@@ -22,7 +22,7 @@ addpath([cd '/funcs/latex_fig'])
 addpath([cd '/funcs/ColorBand'])
 plot_formatting_setup
 % are we doing a quick run, or a proper long run?
-run_type = 'testing'; % ['testing'|'publication']
+run_type = 'publication'; % ['testing'|'publication']
 T1=clock;
 
 %% Define parameters
