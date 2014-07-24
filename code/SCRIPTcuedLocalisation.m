@@ -29,12 +29,12 @@ T1=clock;
 switch run_type
     case{'testing'}
         TRIALS				= 500; % number of trials to simulate it any one run
-        cue_validity_list	= linspace(0.01,1-0.01,5);
+        cue_validity_list	= linspace(0.001,1-0.001,5);
         variance_list		= 1./[4  1  0.25];
         
     case{'publication'}
         TRIALS				= 50000; % number of trials to simulate it any one run
-        cue_validity_list	= linspace(0,1,9);
+        cue_validity_list	= linspace(0.001,1-0.001,9);
         variance_list		= 1./[4  1  0.25];
 end
 
