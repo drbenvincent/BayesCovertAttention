@@ -20,7 +20,7 @@ function [AUC, FAR, HR] = MCMCdetection(N, varT, varD, TRIALS)
 % (from this step 1) then we can compare the inferred trial type to the
 % actual trial type to evaluate the detection performance of the model.
 
-JAGSmodel = 'JAGSdetection.txt'
+JAGSmodel = 'JAGSdetection_test.txt';
 
 %%
 % Define parameters and place observed parameter values into the structure

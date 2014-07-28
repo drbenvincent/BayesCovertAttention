@@ -2,13 +2,19 @@
 # Optimal observer for localisation task (not cued localisation)
 
 model{
+
+	# loop over trials
 	for (t in 1:T){
-		# sample locations from the location distribution
+
+		# sample from the display type distribution
 		L[t] ~ dcat(pdist)
-		# Generate stimuli
+		
+		# loop over stimulus locations
 		for (n in 1:N){	
+			
 			# decide true stimulus values
 			theta[n,t] <- ifelse(n==L[t],1,0)
+			
 			# observed 
 			x[n,t] ~ dnorm(theta[n,t] , 1/variance)
   		}

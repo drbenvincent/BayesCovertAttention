@@ -13,13 +13,13 @@ model{
 		for (n in 1:N){
 
 			# decide true stimulus values
-			#theta[n,t] <- equals(n,D[t])
+			theta[n,t] <- equals(n,D[t])
 		
 			# define the sensory noise variance associated with each stimulus
-			#vars[n,t] <- ifelse(n==D[t],varT,varD)
+			vars[n,t] <- ifelse(n==D[t],varT,varD)
 		
 			# observed
-			x[n,t] ~ dnorm( equals(n,D[t]) , 1/ifelse(n==D[t],varT,varD) )
+			x[n,t] ~ dnorm( theta[n,t] , 1/(vars[n,t]) )
   		}
 	}
 }
