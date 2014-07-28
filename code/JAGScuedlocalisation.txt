@@ -14,15 +14,11 @@ model{
   		}
 
 		# sample the target location from this spatial prior
-		L[t] ~ dcat(spatial_prior[,t] )
+		D[t] ~ dcat(spatial_prior[,t] )
 
 		# Generate stimuli
 		for (n in 1:N){	
-			# decide true stimulus values
-			theta[n,t] <- ifelse(n==L[t],1,0)
-
-			# observed 
-			x[n,t] ~ dnorm(theta[n,t] , 1/variance)
+			x[n,t] ~ dnorm( equals(n,D[t]) , 1/variance )
   		}
 	}
 }

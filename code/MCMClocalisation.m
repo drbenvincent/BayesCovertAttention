@@ -2,8 +2,8 @@
 %
 %%
 
-function [PC] = MCMClocalisation(mcmcparams,N, pdist, variance, TRIALS)
-%  N=4; pdist=[1/2 1/6 1/6 1/6]; variance = 1; TRIALS =100;
+function [PC] = MCMClocalisation(mcmcparams,N, Dprior, variance, TRIALS)
+%  N=4; Dprior=[1/2 1/6 1/6 1/6]; variance = 1; TRIALS =100;
 
 %% Preliminaries
 JAGSmodel = 'JAGSlocalisation.txt';
@@ -18,7 +18,7 @@ params.T                = 1;% simulate 1 trial, but generate many MCMC samples, 
 params.variance         = variance;
 
 % for generating the data, we specify the distribution from which L is sampled from
-params.pdist			= pdist; 
+params.Dprior			= Dprior; 
 % create uninformative prior for dirichlet distribution
 %params.dirchprior 		= ones(N,1);
 
@@ -52,8 +52,8 @@ for n=1:mcmcparams.generate.nchains
         done=0;
         while done~=1
             tempLocation = round( ( rand*(N-1)) +1);
-            if params.pdist(tempLocation) ~=0
-                initial_param(n).L(t) = tempLocation;
+            if params.Dprior(tempLocation) ~=0
+                initial_param(n).D(t) = tempLocation;
                 done=1;
             end
         end
@@ -77,7 +77,7 @@ end
     'nburnin', mcmcparams.generate.nburnin,...             
     'nsamples', mcmcparams.generate.nsamples, ...           
     'thin', 1, ...                      
-    'monitorparams', {'L','x'}, ...    
+    'monitorparams', {'D','x'}, ...    
     'savejagsoutput' , 1 , ...   
     'verbosity' , 1 , ...              
     'cleanup' , 1 ,...
@@ -106,7 +106,7 @@ clear initial_param
 
 %%
 % grab true locations from the dataset made in step 1
-true_location = squeeze(dataset.L);
+true_location = squeeze(dataset.D);
 
 
 
@@ -144,8 +144,8 @@ for i=1:mcmcparams.infer.nchains
 		done=0;
 		while done~=1
 			tempLocation = round( (rand*(params.N-1)) +1);
-			if params.pdist(tempLocation) ~=0
-				initial_param(i).L(t) = tempLocation;
+			if params.Dprior(tempLocation) ~=0
+				initial_param(i).D(t) = tempLocation;
 				done=1;
 			end
 		end
@@ -170,7 +170,7 @@ end
     'nburnin', mcmcparams.infer.nburnin,...             
     'nsamples', mcmcparams.infer.nsamples, ...           
     'thin', 1, ...                      
-    'monitorparams', {'L','pdist'}, ...  
+    'monitorparams', {'D'}, ...  
     'savejagsoutput' , 1 , ... 
     'verbosity' , 1 , ... 
     'cleanup' , 1 ,...
@@ -195,18 +195,18 @@ end
 
 for t=1:TRIALS
     % extract MCMC samples for this trial
-    samples_for_this_trial = samples.L(:,:,t);
+    samples_for_this_trial = samples.D(:,:,t);
     % convert into a vector
     samples_for_this_trial = samples_for_this_trial(:);
     % Calculate the MAP estimate of target location, i.e. the mode of L
-	L(t)		= mode( samples_for_this_trial );
+	D(t)		= mode( samples_for_this_trial );
 end
 
 %%
 % Examine the performance of the optimal observer. On what proportion of
 % the trials did the observer's MAP estimate of L correspond to the true
 % target location?
-Ncorrect = sum( L==true_location );
+Ncorrect = sum( D==true_location );
 [PC, PCI] = binofit(Ncorrect,TRIALS);
 
 

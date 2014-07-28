@@ -31,7 +31,7 @@ T1=clock;
 
 switch run_type
     case{'testing'}
-        TRIALS              = 1000;
+        TRIALS              = 500;
         list_of_variances   = 1./[4 1 0.25];
         dprime              = 1./list_of_variances;
         size_sizes          = [2 4 8];

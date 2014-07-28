@@ -20,7 +20,9 @@ function [AUC, FAR, HR] = MCMCdetection(N, varT, varD, TRIALS)
 % (from this step 1) then we can compare the inferred trial type to the
 % actual trial type to evaluate the detection performance of the model.
 
-JAGSmodel = 'JAGSdetection.txt'
+
+JAGSmodel = 'JAGSdetection.txt';
+
 
 %%
 % Define parameters and place observed parameter values into the structure
@@ -30,6 +32,7 @@ data.N			= N; % number of locations
 data.T			= 1; % only 1 trial, but we sample many times
 data.varT       = varT;
 data.varD       = varD;
+	
 %%
 % Construct a prior over display type
 data.Dprior		= [prob_present.*(ones(data.N,1)/data.N) ; (1-prob_present)]';

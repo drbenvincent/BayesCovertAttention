@@ -7,16 +7,11 @@ model{
 	for (t in 1:T){
 
 		# sample from the display type distribution
-		L[t] ~ dcat(pdist)
+		D[t] ~ dcat(Dprior)
 		
 		# loop over stimulus locations
 		for (n in 1:N){	
-			
-			# decide true stimulus values
-			theta[n,t] <- ifelse(n==L[t],1,0)
-			
-			# observed 
-			x[n,t] ~ dnorm(theta[n,t] , 1/variance)
+			x[n,t] ~ dnorm( equals(n,D[t]) , 1/variance )
   		}
 	}
 }

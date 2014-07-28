@@ -38,7 +38,7 @@ for i=1:mcmcparams.generate.nchains
     % spatial prior is equal to zero, otherwise we get an error message
     % from JAGS.
     
-    initial_param(i).L = round( ( rand*(N-1)) +1);
+    initial_param(i).D = round( ( rand*(N-1)) +1);
     
     % 	done=0;
     %  	while done~=1
@@ -63,7 +63,7 @@ end
     'nburnin', mcmcparams.generate.nburnin,...
     'nsamples', mcmcparams.generate.nsamples, ...
     'thin', 1, ...
-    'monitorparams', {'c','L','x'}, ...
+    'monitorparams', {'c','D','x'}, ...
     'savejagsoutput' , 0 , ...
     'verbosity' , 0 , ...
     'cleanup' , 1 ,...
@@ -76,7 +76,7 @@ clear initial_param
 
 %%
 % grab true locations from the dataset made in step 1
-true_location = squeeze(dataset.L);
+true_location = squeeze(dataset.D);
 
 
 
@@ -110,7 +110,7 @@ params.c		= squeeze(dataset.c)';
 % end
 
 for i=1:mcmcparams.infer.nchains
-    initial_param(i).L			= randi(params.N, TRIALS,1);
+    initial_param(i).D			= randi(params.N, TRIALS,1);
 end
     
 % for i=1:mcmcparams.infer.nchains
@@ -170,7 +170,7 @@ end
     'nburnin', mcmcparams.infer.nburnin,...
     'nsamples', mcmcparams.infer.nsamples, ...
     'thin', 1, ...
-    'monitorparams', {'L',}, ...
+    'monitorparams', {'D'}, ...
     'savejagsoutput' , 0 , ...
     'verbosity' , 0 , ...
     'cleanup' , 1 ,...
@@ -183,11 +183,11 @@ end
 % (proportion correct, |PC|).
 
 for t=1:TRIALS
-    L(t)		= mode( vec(samples.L(:,:,t)) );
+    D(t)		= mode( vec(samples.D(:,:,t)) );
 end
 
 % Examine the performance of the optimal observer
-Ncorrect = sum( L==true_location );
+Ncorrect = sum( D==true_location );
 [PC, PCI] = binofit(Ncorrect,TRIALS);
 
 
