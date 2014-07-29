@@ -1,0 +1,28 @@
+# JAGS model for optimal observer CUED detection
+
+
+model{
+
+	# loop over trials
+	for (t in 1:T) {
+
+		# sample the cue location
+		c[t] ~ dcat(uniformdist)
+	
+		# update prior over display type
+		# assuming prevelance of 0.5
+		for (n in 1:N){	
+			spatial_prior[n,t] <- ifelse(n==c[t], 0.5*v, (0.5*(1-v))/(N-1))
+  		}
+  		# prior for absent is always (1-prev). We assume prev=0.5
+  		spatial_prior[N+1,t] <- 0.5;
+
+		# sample the target location from this spatial prior
+		D[t] ~ dcat(spatial_prior[,t] )
+
+		# Generate stimuli
+		for (n in 1:N){
+			x[n,t] ~ dnorm( equals(n,D[t]) , 1/ifelse(n==D[t],varT,varD) )
+  		}
+	}
+}
