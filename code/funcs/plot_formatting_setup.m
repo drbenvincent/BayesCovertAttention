@@ -3,7 +3,7 @@
 % Changes a few defaults to make plots nicer
 
 set(0,'DefaultFigurePaperType', 'A4');
-set(0,'DefaultFigureWindowStyle', 'normal');	% 'normal' or 'docked'
+%set(0,'DefaultFigureWindowStyle', 'normal');	% 'normal' or 'docked'
 
 set(0,'DefaultAxesBox', 'off');
 set(0,'DefaultFigureColor',[1 1 1])

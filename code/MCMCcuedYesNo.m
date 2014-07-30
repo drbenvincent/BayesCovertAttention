@@ -16,22 +16,11 @@ params.T                = 1;% simulate 1 trial, but generate many MCMC samples, 
 params.v                = cue_validity;
 params.varT         = variance;
 params.varD         = variance;
-params.uniformdist      = ones(N,1)./N; % uniform distribution
-% % create uninformative prior for dirichlet distribution
-% params.dirchprior = ones(N,1);
-
-% for generating the data, we specify the distribution from which L is sampled from
-%params.pdist			= ones(N,1)./N;
-% create uninformative prior for dirichlet distribution
-% params.dirchprior 		= ones(N,1);
+params.uniformdist      = ones(N,1)./N; % uniform distribution, for cue location
 
 %%
-% % MCMC parameters for JAGS
-% nchains  = 1;       % WE WANT ONE CHAIN
-% nburnin  = 1000;    % How Many Burn-in Samples?
-% nsamples = TRIALS;  % How many simulated truals we want
-
 % Set initial values for latent variable in each chain
+
 for i=1:mcmcparams.generate.nchains
     %initial_param(i).L			= randi(params.N);
     
@@ -219,7 +208,6 @@ Ppresent = zeros(params.T,1);
 % Calculate the decision variable for all trials. This is the posterior
 % probability of the L indicating target presence, i.e. L={1,...,N} and not
 % L=N+1 (indicating target absence).
-tic
 for t=1:params.T
 	% grab the MCMC samples of L for this trial, for all chains
 	temp = vec( samples.D( [1:mcmcparams.infer.nchains] ,:,t) );
@@ -235,7 +223,6 @@ for t=1:params.T
 	% is present, i.e. the probability mass corresponding to L={1,...,N}
 	Ppresent(t) = sum( Dprob([1:N]) );
 end
-toc
 
 %% 
 % Grab the decision variables for the signal and the noise trials
@@ -252,6 +239,16 @@ IP = Ppresent(invalid_present_trials);
 % |ROC_calcHRandFAR_VECTORIZED|.
 [HR, FAR, AUC_valid_present]=ROC_calcHRandFAR_VECTORIZED(N,VP);
 [HR, FAR, AUC_invalid_present]=ROC_calcHRandFAR_VECTORIZED(N,IP);
+
+figure(5), clf
+subplot(1,2,1), hist_compare(N,VP,30)
+xlabel('P(present)')
+title('valid')
+
+subplot(1,2,2), hist_compare(N,IP,30)
+xlabel('decision variable, P(present)')
+title('invalid')
+drawnow
 
 
 return
