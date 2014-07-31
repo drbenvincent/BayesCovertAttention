@@ -261,17 +261,20 @@ IP = Ppresent(invalid_present_trials);
 % Use that to calculate ROC curve with the function
 % |ROC_calcHRandFAR_VECTORIZED|.
 [HR, FAR, AUC_valid_present]=ROC_calcHRandFAR_VECTORIZED(N,VP);
-[HR, FAR, AUC_invalid_present]=ROC_calcHRandFAR_VECTORIZED(N,IP);
 
 figure(5), clf
-subplot(1,2,1), hist_compare(N,VP,30)
+subplot(2,2,1), hist_compare(N,VP,linspace(0,1,50))
 xlabel('P(present)')
 title('valid')
+subplot(2,2,3), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
 
-subplot(1,2,2), hist_compare(N,IP,30)
+[HR, FAR, AUC_invalid_present]=ROC_calcHRandFAR_VECTORIZED(N,IP);
+
+subplot(2,2,2), hist_compare(N,IP,linspace(0,1,50))
 xlabel('decision variable, P(present)')
 title('invalid')
-drawnow
+subplot(2,2,4), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
 
+drawnow
 
 return

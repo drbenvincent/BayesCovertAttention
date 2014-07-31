@@ -30,24 +30,6 @@ for i=1:5
 	
 end
 
-validHR
-invalidHR
-
-AUC
-
-AUC_valid_present
-
-AUC_invalid_present
-
-figure(1), clf
-plot(validHR), ylim([0.5, 1]), hold on
-plot(invalidHR)
-plot(AUC)
-plot(AUC_valid_present)
-plot(AUC_invalid_present)
-title([num2str(TRIALS) ,' trials'])
-xlabel('simulation run')
-
 
 
 min_sec(toc)
