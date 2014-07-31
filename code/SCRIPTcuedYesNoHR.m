@@ -22,10 +22,10 @@ addpath([cd '/funcs/ColorBand'])
 %run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
 
-%% Define parameters
+%% Define experiment parameters
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
-N_testing_trials = 2000;
+N_testing_trials = 10000;
 T_publication_trials = 5000;
 switch run_type
     case{'testing'}
@@ -42,7 +42,7 @@ switch run_type
         expt(n).TRIALS          = N_testing_trials; 
 		expt(n).cue_validity    = 0.7; % FIXED
         expt(n).set_size_list   = [2 8];
-        expt(n).variance_list   = [0.5:0.5:10];
+        expt(n).variance_list   = [0.5:1:10];
 		expt(n).run_type		= run_type;
 		
 		% Experiment 3
@@ -77,12 +77,6 @@ switch run_type
         expt(n).variance		= 1; % FIXED
 		expt(n).run_type		= run_type;
 end
-
-
-
-%% SANITY CHECK
-
-% First, make sure the model is actually doing something sensible. 
 
 
 
