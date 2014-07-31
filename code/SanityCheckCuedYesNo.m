@@ -7,14 +7,28 @@ mcmcparams = define_mcmcparams(run_type, TRIALS)
 
 %% Set size N=2
 
-N=4
+tic
+N=2
 variance=1
-cue_validity=0.8 % uninformative cue 
+cue_validity=0.8 % uninformative cue
 
 
-[AUC, AUC_valid_present, AUC_invalid_present, ...
-	validHR, invalidHR] = internalMCMCcuedYesNo(mcmcparams, N, variance, cue_validity, TRIALS)
-
+% do this multiple times to test the variability
+for i=1:5
+	[AUC(i), AUC_valid_present(i), AUC_invalid_present(i), ...
+		validHR(i), invalidHR(i)] = internalMCMCcuedYesNo(mcmcparams, N, variance, cue_validity, TRIALS)
+	
+	figure(1), clf
+	plot(validHR), ylim([0.5, 1]), hold on
+	plot(invalidHR)
+	plot(AUC)
+	plot(AUC_valid_present)
+	plot(AUC_invalid_present)
+	title([num2str(TRIALS) ,' trials'])
+	xlabel('simulation run')
+	drawnow
+	
+end
 
 validHR
 invalidHR
@@ -25,6 +39,18 @@ AUC_valid_present
 
 AUC_invalid_present
 
+figure(1), clf
+plot(validHR), ylim([0.5, 1]), hold on
+plot(invalidHR)
+plot(AUC)
+plot(AUC_valid_present)
+plot(AUC_invalid_present)
+title([num2str(TRIALS) ,' trials'])
+xlabel('simulation run')
+
+
+
+min_sec(toc)
 return
 
 
@@ -53,7 +79,7 @@ params.uniformdist      = ones(N,1)./N; % uniform distribution, for cue location
 % Set initial values for latent variable in each chain
 
 for i=1:mcmcparams.generate.nchains
-    initial_param(i).D = round( ( rand*(N-1)) +1);
+	initial_param(i).D = round( ( rand*(N-1)) +1);
 end
 
 %%
@@ -61,20 +87,20 @@ end
 %fprintf( 'Running JAGS...\n' );
 %tic
 [dataset, stats, structArray] = matjags( ...
-    params, ...
-    fullfile(pwd, JAGSmodel), ...
-    initial_param, ...
-    'doparallel' , mcmcparams.doparallel, ...
-    'nchains', mcmcparams.generate.nchains,...
-    'nburnin', mcmcparams.generate.nburnin,...
-    'nsamples', mcmcparams.generate.nsamples, ...
-    'thin', 1, ...
-    'monitorparams', {'c','D','x','Dprior'}, ...
-    'savejagsoutput' , 0 , ...
-    'verbosity' , 1 , ...
-    'cleanup' , 1 ,...
-    'rndseed',1,...
-    'dic',0);
+	params, ...
+	fullfile(pwd, JAGSmodel), ...
+	initial_param, ...
+	'doparallel' , mcmcparams.doparallel, ...
+	'nchains', mcmcparams.generate.nchains,...
+	'nburnin', mcmcparams.generate.nburnin,...
+	'nsamples', mcmcparams.generate.nsamples, ...
+	'thin', 1, ...
+	'monitorparams', {'c','D','x','Dprior'}, ...
+	'savejagsoutput' , 0 , ...
+	'verbosity' , 1 , ...
+	'cleanup' , 1 ,...
+	'rndseed',1,...
+	'dic',0);
 
 
 clear initial_param
@@ -87,7 +113,7 @@ T		= TRIALS;
 C		= squeeze(dataset.c)';
 Dprior	= squeeze(dataset.Dprior);
 D		= squeeze(dataset.D)';
-clc
+
 % 1. do the priors over display types sum to 1 on every trial?
 if sum( sum(Dprior,2) ~=1 ) > 0
 	display('TEST1: FAIL')
@@ -114,24 +140,23 @@ display('TEST4: distribution of cued should be uniform ')
 display(p)
 
 % 4. test the mean and variance of the stimuli x
- % check mean and variance of ALL observations on target absent trials
- tempx=vec(x(:,D==N+1));
- mean(tempx)
- var(tempx)
- % check mean and variance of TARGETS on present trials
- present = D<N+1;
- tloc = D(present);
+% check mean and variance of ALL observations on target absent trials
+tempx=vec(x(:,D==N+1));
+mean(tempx)
+var(tempx)
+% check mean and variance of TARGETS on present trials
+present = D<N+1;
+tloc = D(present);
 targetx=[];
- for t=1:T
-	 % skip criteria
-	 if D(t)==N+1, continue, end
-	 
-	 targetx = [targetx x(D(t),t)];
- end
-  mean(targetx)
-  var(targetx)
-  
-pause
+for t=1:T
+	% skip criteria
+	if D(t)==N+1, continue, end
+	
+	targetx = [targetx x(D(t),t)];
+end
+mean(targetx)
+var(targetx)
+
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -166,27 +191,27 @@ params.c		= squeeze(dataset.c)';
 %%
 % Set initial values for latent variable in each chain
 for i=1:mcmcparams.infer.nchains
-    initial_param(i).D			= randi(params.N+1, TRIALS,1);
+	initial_param(i).D			= randi(params.N+1, TRIALS,1);
 end
- 
+
 %%
 % Calling JAGS to sample
 %fprintf( 'Running JAGS...\n' );
 %tic
 [samples, stats, structArray] = matjags( ...
-    params, ...
-    fullfile(pwd, JAGSmodel), ...
-    initial_param, ...
-    'doparallel' , mcmcparams.doparallel, ...
-    'nchains', mcmcparams.infer.nchains,...
-    'nburnin', mcmcparams.infer.nburnin,...
-    'nsamples', mcmcparams.infer.nsamples, ...
-    'thin', 1, ...
-    'monitorparams', {'D'}, ...
-    'savejagsoutput' , 0 , ...
-    'verbosity' , 1 , ...
-    'cleanup' , 1 ,...
-    'rndseed',1);
+	params, ...
+	fullfile(pwd, JAGSmodel), ...
+	initial_param, ...
+	'doparallel' , mcmcparams.doparallel, ...
+	'nchains', mcmcparams.infer.nchains,...
+	'nburnin', mcmcparams.infer.nburnin,...
+	'nsamples', mcmcparams.infer.nsamples, ...
+	'thin', 1, ...
+	'monitorparams', {'D'}, ...
+	'savejagsoutput' , 0 , ...
+	'verbosity' , 1 , ...
+	'cleanup' , 1 ,...
+	'rndseed',1);
 
 
 
@@ -208,8 +233,11 @@ end
 present_trials	= dataset.D<=params.N;
 absent_trials	= dataset.D==params.N+1;
 
+% There should be about `(cue_validity*0.5)*TRIALS` valid present trials
 valid_present_trials = dataset.D==dataset.c;
-invalid_present_trials = dataset.D~=dataset.c;
+% There should be about `((1-cue_validity)*0.5)*TRIALS` invalid present trials
+%invalid_present_trials = dataset.D~=dataset.c; %<--- incorrect
+invalid_present_trials = dataset.D(present_trials)~=dataset.c(present_trials);
 
 % preallocate
 Ppresent = zeros(params.T,1);
@@ -245,13 +273,13 @@ end
 toc
 
 %% Calculate the valid hit rate, and invalid hit rate
-NvalidPresent = sum(valid_present_trials);
+NvalidPresent	= sum(valid_present_trials);
 NinvalidPresent = sum(invalid_present_trials);
-all_hits	= present_trials' == response;
-validHR		= sum(all_hits(valid_present_trials)) / NvalidPresent;
-invalidHR	= sum(all_hits(invalid_present_trials)) / NinvalidPresent; 
+all_hits		= present_trials' == response;
+validHR			= sum(all_hits(valid_present_trials)) / NvalidPresent;
+invalidHR		= sum(all_hits(invalid_present_trials)) / NinvalidPresent;
 
-%% 
+%%
 % Grab the decision variables for the signal and the noise trials
 S = Ppresent(present_trials);
 N = Ppresent(absent_trials);
@@ -265,17 +293,24 @@ IP = Ppresent(invalid_present_trials);
 % Use that to calculate ROC curve with the function
 % |ROC_calcHRandFAR_VECTORIZED|.
 [HR, FAR, AUC_valid_present]=ROC_calcHRandFAR_VECTORIZED(N,VP);
-[HR, FAR, AUC_invalid_present]=ROC_calcHRandFAR_VECTORIZED(N,IP);
+
 
 figure(5), clf
-subplot(1,2,1), hist_compare(N,VP,50)
+subplot(2,2,1), hist_compare(N,VP,linspace(0,1,50))
 xlabel('P(present)')
 title('valid')
+subplot(2,2,3), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
 
-subplot(1,2,2), hist_compare(N,IP,50)
+[HR, FAR, AUC_invalid_present]=ROC_calcHRandFAR_VECTORIZED(N,IP);
+
+subplot(2,2,2), hist_compare(N,IP,linspace(0,1,50))
 xlabel('decision variable, P(present)')
 title('invalid')
+subplot(2,2,4), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
+
+
 drawnow
+
 
 
 return

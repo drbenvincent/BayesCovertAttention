@@ -200,8 +200,12 @@ end
 present_trials	= dataset.D<=params.N;
 absent_trials	= dataset.D==params.N+1;
 
+% There should be about `(cue_validity*0.5)*TRIALS` valid present trials
 valid_present_trials = dataset.D==dataset.c;
-invalid_present_trials = dataset.D~=dataset.c;
+% There should be about `((1-cue_validity)*0.5)*TRIALS` invalid present trials
+%invalid_present_trials = dataset.D~=dataset.c; %<--- incorrect
+invalid_present_trials = dataset.D(present_trials)~=dataset.c(present_trials);
+
 
 % preallocate
 Ppresent = zeros(params.T,1);
