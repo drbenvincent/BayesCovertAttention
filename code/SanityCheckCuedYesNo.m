@@ -1,14 +1,44 @@
-%%  MCMCcuedYesNo.m
-%
-%%
+function SanityCheckCuedYesNo
+
+run_type	='testing'
+TRIALS		= 1000;
+
+mcmcparams = define_mcmcparams(run_type, TRIALS)
+
+%% Set size N=2
+
+N=4
+variance=1
+cue_validity=0.8 % uninformative cue 
+
+
+[AUC, AUC_valid_present, AUC_invalid_present, ...
+	validHR, invalidHR] = internalMCMCcuedYesNo(mcmcparams, N, variance, cue_validity, TRIALS)
+
+
+validHR
+invalidHR
+
+AUC
+
+AUC_valid_present
+
+AUC_invalid_present
+
+return
+
+
+
+
+
+
 
 function [AUC, AUC_valid_present, AUC_invalid_present, ...
-	validHR, invalidHR] = MCMCcuedYesNo(mcmcparams, N, variance, cue_validity, TRIALS)
+	validHR, invalidHR] = internalMCMCcuedYesNo(mcmcparams, N, variance, cue_validity, TRIALS)
 %  N=4; variance = 1; cue_validity=0.5; TRIALS =1000;
 
 %% Preliminaries
 JAGSmodel = 'JAGScueddetection.txt';
-
 
 %% STEP 1: GENERATE SIMULATED DATASET
 % Place observed variables into the structure |params| to pass to JAGS
@@ -23,22 +53,7 @@ params.uniformdist      = ones(N,1)./N; % uniform distribution, for cue location
 % Set initial values for latent variable in each chain
 
 for i=1:mcmcparams.generate.nchains
-    %initial_param(i).L			= randi(params.N);
-    
-    % The guess initial parameter value for L cannot equal a location who's
-    % spatial prior is equal to zero, otherwise we get an error message
-    % from JAGS.
-    
-    initial_param(i).D = round( ( rand*(N)) +1);
-    
-    % 	done=0;
-    %  	while done~=1
-    % 		tempLocation = round( ( rand*(N-1)) +1);
-    %  		if params.v(tempLocation) ~=0
-    %  			initial_param(i).L = tempLocation;
-    %  			done=1;
-    % 		end
-    %  	end
+    initial_param(i).D = round( ( rand*(N-1)) +1);
 end
 
 %%
@@ -54,15 +69,76 @@ end
     'nburnin', mcmcparams.generate.nburnin,...
     'nsamples', mcmcparams.generate.nsamples, ...
     'thin', 1, ...
-    'monitorparams', {'c','D','x'}, ...
+    'monitorparams', {'c','D','x','Dprior'}, ...
     'savejagsoutput' , 0 , ...
-    'verbosity' , 0 , ...
+    'verbosity' , 1 , ...
     'cleanup' , 1 ,...
     'rndseed',1,...
     'dic',0);
 
 
 clear initial_param
+
+%%
+% sanity check here ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+x		= squeeze(dataset.x)';
+T		= TRIALS;
+C		= squeeze(dataset.c)';
+Dprior	= squeeze(dataset.Dprior);
+D		= squeeze(dataset.D)';
+clc
+% 1. do the priors over display types sum to 1 on every trial?
+if sum( sum(Dprior,2) ~=1 ) > 0
+	display('TEST1: FAIL')
+	display('possibility... the numbers are EXACTLY equal to 1, but very close')
+else
+	display('TEST1: Passed')
+end
+
+% 2. what is the actual occurence of each display type?
+[n,~]=hist(D,[1:N+1]); p=n./sum(n);
+fprintf('TEST2: relative occurence of each display type:')
+display(p)
+
+% 3. did the proportion of present/valid trials match the cue
+% validity*prevelance
+display('TEST3: ')
+fprintf('cue should equal the display type on (v*prevelance)=%2.2f\n',...
+	cue_validity*0.5)
+fprintf('actual was %2.2f\n', sum(C==D)./TRIALS)
+
+% 3. the distribution of cues should be uniform
+display('TEST4: distribution of cued should be uniform ')
+[n,~]=hist(C,[1:N]); p=n./sum(n);
+display(p)
+
+% 4. test the mean and variance of the stimuli x
+ % check mean and variance of ALL observations on target absent trials
+ tempx=vec(x(:,D==N+1));
+ mean(tempx)
+ var(tempx)
+ % check mean and variance of TARGETS on present trials
+ present = D<N+1;
+ tloc = D(present);
+targetx=[];
+ for t=1:T
+	 % skip criteria
+	 if D(t)==N+1, continue, end
+	 
+	 targetx = [targetx x(D(t),t)];
+ end
+  mean(targetx)
+  var(targetx)
+  
+pause
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
 
 
 %%
@@ -80,8 +156,6 @@ true_location = squeeze(dataset.D);
 %% STEP 2: INFER THE TRIAL TYPE GIVEN THE SENSORY OBSERVATIONS
 % Now do inference on ALL the generated data
 
-% now we MAY OR MAY NOT want to remove knowledge that L is sampled from a uniform distribution over each location (pdist=[1/N ... 1/N])
-%params = rmfield(params, 'pdist')
 
 %%
 % update some of the parameters
@@ -90,64 +164,11 @@ params.T		= TRIALS;
 params.c		= squeeze(dataset.c)';
 
 %%
-% % Defining some MCMC parameters for JAGS
-% nchains  = 2; % How Many Chains?
-% nburnin  = 1000; % How Many Burn-in Samples?
-% nsamples = 2000;  % How Many Recorded Samples?
-
 % Set initial values for latent variable in each chain
-% for i=1:mcmcparams.infer.nchains
-% 	initial_param(i).L			= randi(params.N, TRIALS,1);
-% end
-
 for i=1:mcmcparams.infer.nchains
     initial_param(i).D			= randi(params.N+1, TRIALS,1);
 end
-    
-% for i=1:mcmcparams.infer.nchains
-%     initial_param(i)=0;
-%     %initial_param(i).L			= randi(params.N, TRIALS,1);
-% %     for t=1:TRIALS
-% %         for n=1:N
-% %             initial_param(i).x(n,t) = [];
-% %         end
-% %         
-% %         % 		%initial_param(i).L(t) = round( ( rand*(N-1)) +1);
-% %         %
-% %         % 		% We need the initial parameter guess for L to NOT be in a location
-% %         % 		% where the target cannot be. For example, if the cue validity is
-% %         % 		% zero and the cue is observed in location 1, then we need the
-% %         % 		% initial guess of L to be anything other than 1.
-% %         %
-% %         % 		% L
-% %         % 		done=0;
-% %         % 		while done~=1
-% %         % % 			% calculate cue distribution
-% %         % % 			cue_dist=ones(N,1)* (1-cue_validity)/(N-1);
-% %         % % 			cue_dist(params.c(t)) = cue_validity;
-% %         %
-% %         % 			tempLocation = round( (rand*(params.N-1)) +1);
-% %         % 			if cue_dist(tempLocation) ~=0
-% %         % 				initial_param(i).L(t) = tempLocation;
-% %         % 				done=1;
-% %         % 			end
-% %         % 		end
-% %         % %
-% %         % % 		% c
-% %         % % 		done=0;
-% %         % % 		while done~=1
-% %         % % 			tempLocation = round( (rand*(params.N-1)) +1);
-% %         % % 			if params.pdist(tempLocation) ~=1
-% %         % % 				initial_param(i).c(t) = tempLocation;
-% %         % % 				done=1;
-% %         % % 			end
-% %         % % 		end
-% %         %
-% %         % 		%initial_param(i).L(t) = round( (rand*(params.N-1)) +1);
-% %         
-% %     end
-% end
-
+ 
 %%
 % Calling JAGS to sample
 %fprintf( 'Running JAGS...\n' );
@@ -163,23 +184,10 @@ end
     'thin', 1, ...
     'monitorparams', {'D'}, ...
     'savejagsoutput' , 0 , ...
-    'verbosity' , 0 , ...
+    'verbosity' , 1 , ...
     'cleanup' , 1 ,...
     'rndseed',1);
-%min_sec(toc);
 
-
-% %%
-% % Extract the MCMC samples and use them to calculate the performance
-% % (proportion correct, |PC|).
-% 
-% for t=1:TRIALS
-%     D(t)		= mode( vec(samples.D(:,:,t)) );
-% end
-% 
-% % Examine the performance of the optimal observer
-% Ncorrect = sum( D==true_location );
-% [PC, PCI] = binofit(Ncorrect,TRIALS);
 
 
 %% STEP 3: Decision step
@@ -211,7 +219,7 @@ response = zeros(params.T,1);
 % probability of the L indicating target presence, i.e. L={1,...,N} and not
 % L=N+1 (indicating target absence).
 tic
-for t=1:params.T
+parfor t=1:params.T
 	% grab the MCMC samples of L for this trial, for all chains
 	%temp = vec( samples.D( [1:mcmcparams.infer.nchains] ,:,t) );
 	temp = vec( samples.D(:,:,t) );
@@ -260,11 +268,11 @@ IP = Ppresent(invalid_present_trials);
 [HR, FAR, AUC_invalid_present]=ROC_calcHRandFAR_VECTORIZED(N,IP);
 
 figure(5), clf
-subplot(1,2,1), hist_compare(N,VP,30)
+subplot(1,2,1), hist_compare(N,VP,50)
 xlabel('P(present)')
 title('valid')
 
-subplot(1,2,2), hist_compare(N,IP,30)
+subplot(1,2,2), hist_compare(N,IP,50)
 xlabel('decision variable, P(present)')
 title('invalid')
 drawnow
