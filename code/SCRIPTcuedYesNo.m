@@ -8,7 +8,7 @@ function SCRIPTcuedYesNo(run_type)
 
 %% Preliminaries
 %clear,
-%close all; 
+%close all;
 figure(4), clf
 clc
 set(0,'DefaultFigureWindowStyle','normal') % 'docked' or 'normal'
@@ -27,57 +27,57 @@ T1=clock;
 %% Define parameters
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
-N_testing_trials = 10000;
+N_testing_trials = 100;
 T_publication_trials = 2000;
 switch run_type
-    case{'testing'}
-        % Experiment 1
+	case{'testing'}
+		% Experiment 1
 		n=1;
-        expt(n).TRIALS          = N_testing_trials; 
-        expt(n).set_size_list	= 2; % FIXED, single value
-        expt(n).variance_list   = 1./[4 1 0.25];
-        expt(n).cue_validity_list= linspace(0.1,0.9,5);
+		expt(n).TRIALS          = N_testing_trials;
+		expt(n).set_size_list	= 2; % FIXED, single value
+		expt(n).variance_list   = 1./[4 1 0.25];
+		expt(n).cue_validity_list= linspace(0.1,0.9,5);
 		expt(n).run_type		= run_type;
-  
-        % Experiment 2
+		
+		% Experiment 2
 		n=2;
-        expt(n).TRIALS          = N_testing_trials; 
+		expt(n).TRIALS          = N_testing_trials;
 		expt(n).cue_validity_list    = 0.7; % FIXED, single value
-        expt(n).set_size_list   = [2 ];
-        expt(n).variance_list   = [0.1:0.5:10];
+		expt(n).set_size_list   = [2 ];
+		expt(n).variance_list   = [0.1:0.5:10];
 		expt(n).run_type		= run_type;
 		
 		% Experiment 3
 		n=3
-        expt(n).TRIALS          = N_testing_trials; 
-		expt(n).cue_validity_list = [0.5 0.7]; 
-        expt(n).set_size_list   = [2:1:9];
-        expt(n).variance_list	= 1; % FIXED, single value
+		expt(n).TRIALS          = N_testing_trials;
+		expt(n).cue_validity_list = [0.5 0.7];
+		expt(n).set_size_list   = [2:1:9];
+		expt(n).variance_list	= 1; % FIXED, single value
 		expt(n).run_type		= run_type;
-    case{'publication'}
-%                 % Experiment 1
-% 		n=1;
-%         expt(n).TRIALS          = T_publication_trials; 
-%         expt(n).N               = 2; % FIXED
-%         expt(n).variance_list   = 1./[4 1 0.25];
-%         expt(n).cue_validity_list= linspace(0.1,0.9,5);
-% 		expt(n).run_type		= run_type;
-%   
-%         % Experiment 2
-% 		n=2;
-%         expt(n).TRIALS          = T_publication_trials; 
-% 		expt(n).cue_validity    = 0.7; % FIXED
-%         expt(n).set_size_list   = [2 8];
-%         expt(n).variance_list   = [0.1:0.2:10];
-% 		expt(n).run_type		= run_type;
-% 		
-% 		% Experiment 3
-% 		n=3;
-%         expt(n).TRIALS          = T_publication_trials; 
-% 		expt(n).cue_validity_list = [0.5 0.7]; 
-%         expt(n).set_size_list   = [2:1:9];
-%         expt(n).variance		= 1; % FIXED
-% 		expt(n).run_type		= run_type;
+	case{'publication'}
+		%                 % Experiment 1
+		% 		n=1;
+		%         expt(n).TRIALS          = T_publication_trials;
+		%         expt(n).N               = 2; % FIXED
+		%         expt(n).variance_list   = 1./[4 1 0.25];
+		%         expt(n).cue_validity_list= linspace(0.1,0.9,5);
+		% 		expt(n).run_type		= run_type;
+		%
+		%         % Experiment 2
+		% 		n=2;
+		%         expt(n).TRIALS          = T_publication_trials;
+		% 		expt(n).cue_validity    = 0.7; % FIXED
+		%         expt(n).set_size_list   = [2 8];
+		%         expt(n).variance_list   = [0.1:0.2:10];
+		% 		expt(n).run_type		= run_type;
+		%
+		% 		% Experiment 3
+		% 		n=3;
+		%         expt(n).TRIALS          = T_publication_trials;
+		% 		expt(n).cue_validity_list = [0.5 0.7];
+		%         expt(n).set_size_list   = [2:1:9];
+		%         expt(n).variance		= 1; % FIXED
+		% 		expt(n).run_type		= run_type;
 end
 
 
@@ -125,7 +125,7 @@ catch
 	cd(codedir)
 end
 
-return
+end
 
 
 
@@ -153,7 +153,7 @@ legend(num2str(expt.variance_list'))
 
 drawnow
 
-return
+end
 
 
 
@@ -180,7 +180,7 @@ legend(num2str(expt.set_size_list'))
 
 drawnow
 
-return
+end
 
 
 
@@ -214,7 +214,7 @@ legend(num2str(expt.cue_validity_list'))
 
 drawnow
 
-return
+end
 
 
 
@@ -257,7 +257,7 @@ results.AUC_invalid_present = squeeze(AUC_invalid_present);
 results.validHR				= squeeze(validHR);
 results.invalidHR			= squeeze(invalidHR);
 
-return
+end
 
 
 
@@ -270,61 +270,35 @@ function plotExperimentResults(expt, results, xVariable, xlabeltext)
 % = getfield(expt, xVariable);
 x = expt.(xVariable); % <-- use of dynamic field name
 
-% plot output
-%ColorSet = ColorBand(numel(expt.variance_list)); % define line colours
-
-
 % plot output for AUC ~~~~~~~~~~~~~~~~~~~
 subplot(2,3,1)
-hold all, %set(gca, 'ColorOrder', ColorSet);
-plot( x , results.AUC, '.-',...
-	'LineWidth', 2, 'MarkerSize', 20)
-ylim([0.5 1])
-xlabel(xlabeltext), ylabel('AUC')
-title('present/absent')
+plotStuff(x, results.AUC, xlabeltext, 'AUC', 'present/absent')
 
 subplot(2,3,2)
-hold on, %set(gca, 'ColorOrder', ColorSet);
-plot( x , results.AUC_valid_present,...
-	'.-', 'LineWidth', 2, 'MarkerSize', 20)
-ylim([0.5 1])
-xlabel(xlabeltext)
-title('valid/present')
+plotStuff(x, results.AUC_valid_present, xlabeltext, '', 'valid/present')
 
 subplot(2,3,3)
-hold on, %set(gca, 'ColorOrder', ColorSet);
-plot( x , results.AUC_invalid_present,...
-	'.-', 'LineWidth', 2, 'MarkerSize', 20)
-ylim([0.5 1])
-xlabel(xlabeltext)
-title('invalid/present')
+plotStuff(x, results.AUC_invalid_present, xlabeltext, '', 'invalid/present')
 
 % plot output for hit rates ~~~~~~~~~~~~~~~~~~~
 subplot(2,3,4)
-hold all, %set(gca, 'ColorOrder', ColorSet);
-plot( x , results.validHR, '.-',...
-	'LineWidth', 2, 'MarkerSize', 20)
-ylim([0.5 1])
-xlabel(xlabeltext), ylabel('AUC')
-title('validHR')
+plotStuff(x, results.validHR, xlabeltext, '', 'validHR')
 
 subplot(2,3,5)
-hold on, %set(gca, 'ColorOrder', ColorSet);
-plot( x , results.invalidHR, '.-',...
-	'LineWidth', 2, 'MarkerSize', 20)
-ylim([0.5 1])
-xlabel(xlabeltext)
-title('valid/present')
+plotStuff(x, results.invalidHR, xlabeltext, '', 'valid/present')
 
 subplot(2,3,6)
-hold on, %set(gca, 'ColorOrder', ColorSet);
-plot( x , results.validHR-results.invalidHR,...
-	'.-', 'LineWidth', 2, 'MarkerSize', 20)
-%ylim([0.5 1])
-xlabel(xlabeltext)
-title('validHR-invalidHR')
+plotStuff(x, results.validHR-results.invalidHR, xlabeltext, '', 'cueing benefit HR')
 
 drawnow
 
-return
+	function plotStuff(x, y, xlabeltext, ylabeltext, titleText)
+		hold all, %set(gca, 'ColorOrder', ColorSet);
+		plot( x , y, '.-',...
+			'LineWidth', 2, 'MarkerSize', 15)
+		xlabel(xlabeltext), ylabel(ylabeltext)
+		title(titleText)
+	end
+
+end
 

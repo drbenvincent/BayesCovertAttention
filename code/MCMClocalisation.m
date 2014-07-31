@@ -17,16 +17,9 @@ params.T                = 1;% simulate 1 trial, but generate many MCMC samples, 
 % ******************************
 params.variance         = variance;
 
-% for generating the data, we specify the distribution from which L is sampled from
+% for generating the data, we specify the distribution from which D is sampled from
 params.Dprior			= Dprior; 
-% create uninformative prior for dirichlet distribution
-%params.dirchprior 		= ones(N,1);
 
-% %%
-% % MCMC parameters for JAGS
-% nchains  = 1;       % WE WANT ONE CHAIN
-% nburnin  = 1000;    % How Many Burn-in Samples?
-% nsamples = TRIALS;  % How many simulated truals we want
 
 % Set initial values for latent variable in each chain
 for n=1:mcmcparams.generate.nchains
@@ -64,10 +57,7 @@ end
 
 %%
 % Calling JAGS to generate simulated data
-%fprintf( 'Running JAGS...\n' );
-%tic
 
-% THIS CODE DOES NOT WORK. I WANT THIS TO WORK ********************
 [dataset, stats] = matjags( ...
     params, ...                 
     fullfile(pwd, JAGSmodel), ...   
@@ -83,23 +73,6 @@ end
     'cleanup' , 1 ,...
     'rndseed',0,...
     'dic',0); 
-
-% THIS CODE BELOW WORKS. 
-% [dataset, stats] = matjagsBEN( ...
-%     params, ...                 
-%     fullfile(pwd, JAGSmodel), ...   
-%     initial_param, ...                     
-%     'doparallel' , mcmcparams.doparallel, ...      
-%     'nchains', mcmcparams.generate.nchains,...              
-%     'nburnin', mcmcparams.generate.nburnin,...             
-%     'nsamples', mcmcparams.generate.nsamples, ...           
-%     'thin', 1, ...                      
-%     'monitorparams', {'L','x'}, ...    
-%     'savejagsoutput' , 1 , ...   
-%     'verbosity' , 1 , ...              
-%     'cleanup' , 1);  
-
-%min_sec(toc);
 
 clear initial_param
 
@@ -127,20 +100,12 @@ true_location = squeeze(dataset.D);
 params.x		= squeeze(dataset.x)';
 params.T		= TRIALS; 
 
-% %%
-% % Defining some MCMC parameters for JAGS
-% nchains  = 2; % How Many Chains?
-% nburnin  = 1000; % How Many Burn-in Samples?
-% nsamples = 2000;  % How Many Recorded Samples?
-
 % Set initial values for latent variable in each chain
-	% The guess initial parameter value for L cannot equal a location who's
-	% spatial prior is equal to zero, otherwise we get an error message
-	% from JAGS.
+% The guess initial parameter value for D cannot equal a location who's
+% spatial prior is equal to zero, otherwise we get an error message
+% from JAGS.
 for i=1:mcmcparams.infer.nchains
-	%initial_param(i).L			= randi(params.N, TRIALS,1);
 	for t=1:TRIALS
-		
 		done=0;
 		while done~=1
 			tempLocation = round( (rand*(params.N-1)) +1);
@@ -149,18 +114,11 @@ for i=1:mcmcparams.infer.nchains
 				done=1;
 			end
 		end
-	
-	
-		%initial_param(i).L(t) = round( (rand*(params.N-1)) +1);
-
 	end
 end
-%initial_param(i).L
 
 %%
 % Calling JAGS to sample
-%fprintf( 'Running JAGS...\n' );
-%tic
 [samples, stats, structArray] = matjags( ...
     params, ...                       
     fullfile(pwd, JAGSmodel), ...    
@@ -175,8 +133,6 @@ end
     'verbosity' , 1 , ... 
     'cleanup' , 1 ,...
     'rndseed',1); 
-%min_sec(toc);
-
 
 %%
 % Extract the MCMC samples and use them to calculate the performance

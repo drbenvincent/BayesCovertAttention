@@ -30,15 +30,6 @@ for i=1:mcmcparams.generate.nchains
     % from JAGS.
     
     initial_param(i).D = round( ( rand*(N)) +1);
-    
-    % 	done=0;
-    %  	while done~=1
-    % 		tempLocation = round( ( rand*(N-1)) +1);
-    %  		if params.v(tempLocation) ~=0
-    %  			initial_param(i).L = tempLocation;
-    %  			done=1;
-    % 		end
-    %  	end
 end
 
 %%
@@ -90,68 +81,13 @@ params.T		= TRIALS;
 params.c		= squeeze(dataset.c)';
 
 %%
-% % Defining some MCMC parameters for JAGS
-% nchains  = 2; % How Many Chains?
-% nburnin  = 1000; % How Many Burn-in Samples?
-% nsamples = 2000;  % How Many Recorded Samples?
-
 % Set initial values for latent variable in each chain
-% for i=1:mcmcparams.infer.nchains
-% 	initial_param(i).L			= randi(params.N, TRIALS,1);
-% end
-
 for i=1:mcmcparams.infer.nchains
-    initial_param(i).D			= randi(params.N+1, TRIALS,1);
+	initial_param(i).D			= randi(params.N+1, TRIALS,1);
 end
-    
-% for i=1:mcmcparams.infer.nchains
-%     initial_param(i)=0;
-%     %initial_param(i).L			= randi(params.N, TRIALS,1);
-% %     for t=1:TRIALS
-% %         for n=1:N
-% %             initial_param(i).x(n,t) = [];
-% %         end
-% %         
-% %         % 		%initial_param(i).L(t) = round( ( rand*(N-1)) +1);
-% %         %
-% %         % 		% We need the initial parameter guess for L to NOT be in a location
-% %         % 		% where the target cannot be. For example, if the cue validity is
-% %         % 		% zero and the cue is observed in location 1, then we need the
-% %         % 		% initial guess of L to be anything other than 1.
-% %         %
-% %         % 		% L
-% %         % 		done=0;
-% %         % 		while done~=1
-% %         % % 			% calculate cue distribution
-% %         % % 			cue_dist=ones(N,1)* (1-cue_validity)/(N-1);
-% %         % % 			cue_dist(params.c(t)) = cue_validity;
-% %         %
-% %         % 			tempLocation = round( (rand*(params.N-1)) +1);
-% %         % 			if cue_dist(tempLocation) ~=0
-% %         % 				initial_param(i).L(t) = tempLocation;
-% %         % 				done=1;
-% %         % 			end
-% %         % 		end
-% %         % %
-% %         % % 		% c
-% %         % % 		done=0;
-% %         % % 		while done~=1
-% %         % % 			tempLocation = round( (rand*(params.N-1)) +1);
-% %         % % 			if params.pdist(tempLocation) ~=1
-% %         % % 				initial_param(i).c(t) = tempLocation;
-% %         % % 				done=1;
-% %         % % 			end
-% %         % % 		end
-% %         %
-% %         % 		%initial_param(i).L(t) = round( (rand*(params.N-1)) +1);
-% %         
-% %     end
-% end
 
 %%
 % Calling JAGS to sample
-%fprintf( 'Running JAGS...\n' );
-%tic
 [samples, stats, structArray] = matjags( ...
     params, ...
     fullfile(pwd, JAGSmodel), ...
@@ -166,7 +102,6 @@ end
     'verbosity' , 1 , ...
     'cleanup' , 1 ,...
     'rndseed',1);
-%min_sec(toc);
 
 
 % %%
@@ -266,6 +201,7 @@ figure(5), clf
 subplot(2,2,1), hist_compare(N,VP,linspace(0,1,50))
 xlabel('P(present)')
 title('valid')
+
 subplot(2,2,3), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
 
 [HR, FAR, AUC_invalid_present]=ROC_calcHRandFAR_VECTORIZED(N,IP);
@@ -273,6 +209,7 @@ subplot(2,2,3), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
 subplot(2,2,2), hist_compare(N,IP,linspace(0,1,50))
 xlabel('decision variable, P(present)')
 title('invalid')
+
 subplot(2,2,4), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
 
 drawnow

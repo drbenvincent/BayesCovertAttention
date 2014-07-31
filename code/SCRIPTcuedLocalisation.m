@@ -10,9 +10,10 @@
 %
 %%
 
-%function SCRIPTcuedLocalisation(run_type)
+function SCRIPTcuedLocalisation(run_type)
+% SCRIPTcuedLocalisation('testing')
+
 %% Preliminaries
-clear, %close all; clc
 % add paths to dependencies
 addpath([cd '/funcs'])
 addpath([cd '/funcs/export_fig'])
@@ -20,7 +21,7 @@ addpath([cd '/funcs/latex_fig'])
 addpath([cd '/funcs/hline_vline'])
 %addpath([cd '/funcs/ColorBand'])
 % are we doing a quick run, or a proper long run?
-run_type = 'testing'; % ['testing'|'publication']
+%run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
 
 %% Define parameters
@@ -29,7 +30,7 @@ T1=clock;
 
 switch run_type
     case{'testing'}
-        TRIALS				= 500; % number of trials to simulate it any one run
+        TRIALS				= 100; % number of trials to simulate it any one run
         cue_validity_list	= linspace(0.001,1-0.001,5);
         variance_list		= 1./[4  1  0.25];
         
@@ -58,7 +59,6 @@ etime(T2,T1)/60 ;% time in mins
 %% Export the figure 
 
 % Automatic resizing to make figure appropriate for font size
-% Download from here http://www.mathworks.com/matlabcentral/fileexchange/36439-resizing-matlab-plots-for-publication-purposes-latex
 latex_fig(11, 7, 4)
 
 % save as a .fig file
@@ -70,30 +70,62 @@ switch run_type
 		cd('../plots')
 end
 hgsave('results_cued_localisation')
-cd(codedir)
-
-% % set figure size/location on screen
-% set(gcf,'Units','pixels',...
-%     'OuterPosition',[0 0 1024 500])
-
-%%
-% If you download <http://www.mathworks.co.uk/matlabcentral/fileexchange/23629-exportfig export_fig.m>
-% from Mathworks File Exchange, then the following command can be used for 
-% publication quality figure export:
-codedir=cd;
-switch run_type
-	case{'testing'}
-		cd('../plots/testing')
-	case{'publication'}
-		cd('../plots')
-end
 export_fig results_cued_localisation -png -pdf -m1
 cd(codedir)
 
-%return
+
+
+end
 
 
 
+
+%% Sub-function: predictions for a given set size, |N|
+
+function cuedlocalisation_job(mcmcparams, N, TRIALS, cue_validity_list, variance_list, subfig)
+
+dprime				= 1./variance_list;
+
+%%
+% Loop over a range of cue validities and $d'$ values and compute the
+% proportion correct (|PC|) with the function |MCMClocalisation.m|.
+jobcount = 1;
+for v=1:numel(variance_list)
+	variance = variance_list(v);
+	
+	for cv = 1:numel(cue_validity_list)
+		cue_validity = cue_validity_list(cv);
+		
+		fprintf('job %d of %d: %s\n', jobcount,...
+			numel(variance_list)*numel(cue_validity_list), datestr(now) )
+		% run the main MCMClocalisation code with these parameters
+		PC(cv,v) = MCMCcuedLocalisation(mcmcparams, N, variance, cue_validity, TRIALS);
+		
+		jobcount = jobcount + 1;
+	end
+end
+
+%%
+% Plot the results
+figure(1)
+subplot(1,2,subfig)
+
+plot( cue_validity_list.*100 , PC, '.-k',...
+    'LineWidth', 2, 'MarkerSize', 20)
+hline(1/N)
+axis square
+
+set(gca,'XTick',[0:25:100],...
+	'ylim', [0 1],...
+	'XTick',[0:25:100])
+
+title(['set size = ' num2str(N)],'FontSize',16)
+xlabel('expectation (%)')
+ylabel('percent correct')
+
+drawnow
+
+end
 
 
 

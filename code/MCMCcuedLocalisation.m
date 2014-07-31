@@ -16,20 +16,9 @@ params.T                = 1;% simulate 1 trial, but generate many MCMC samples, 
 params.v                = cue_validity;
 params.variance         = variance;
 params.uniformdist      = ones(N,1)./N; % uniform distribution
-% % create uninformative prior for dirichlet distribution
-% params.dirchprior = ones(N,1);
 
-% for generating the data, we specify the distribution from which L is sampled from
-%params.pdist			= ones(N,1)./N;
-% create uninformative prior for dirichlet distribution
-% params.dirchprior 		= ones(N,1);
 
 %%
-% % MCMC parameters for JAGS
-% nchains  = 1;       % WE WANT ONE CHAIN
-% nburnin  = 1000;    % How Many Burn-in Samples?
-% nsamples = TRIALS;  % How many simulated truals we want
-
 % Set initial values for latent variable in each chain
 for i=1:mcmcparams.generate.nchains
     %initial_param(i).L			= randi(params.N);
@@ -70,7 +59,6 @@ end
     'rndseed',1,...
     'dic',0);
 
-
 clear initial_param
 
 
@@ -100,62 +88,10 @@ params.c		= squeeze(dataset.c)';
 
 %%
 % % Defining some MCMC parameters for JAGS
-% nchains  = 2; % How Many Chains?
-% nburnin  = 1000; % How Many Burn-in Samples?
-% nsamples = 2000;  % How Many Recorded Samples?
-
-% Set initial values for latent variable in each chain
-% for i=1:mcmcparams.infer.nchains
-% 	initial_param(i).L			= randi(params.N, TRIALS,1);
-% end
 
 for i=1:mcmcparams.infer.nchains
     initial_param(i).D			= randi(params.N, TRIALS,1);
 end
-    
-% for i=1:mcmcparams.infer.nchains
-%     initial_param(i)=0;
-%     %initial_param(i).L			= randi(params.N, TRIALS,1);
-% %     for t=1:TRIALS
-% %         for n=1:N
-% %             initial_param(i).x(n,t) = [];
-% %         end
-% %         
-% %         % 		%initial_param(i).L(t) = round( ( rand*(N-1)) +1);
-% %         %
-% %         % 		% We need the initial parameter guess for L to NOT be in a location
-% %         % 		% where the target cannot be. For example, if the cue validity is
-% %         % 		% zero and the cue is observed in location 1, then we need the
-% %         % 		% initial guess of L to be anything other than 1.
-% %         %
-% %         % 		% L
-% %         % 		done=0;
-% %         % 		while done~=1
-% %         % % 			% calculate cue distribution
-% %         % % 			cue_dist=ones(N,1)* (1-cue_validity)/(N-1);
-% %         % % 			cue_dist(params.c(t)) = cue_validity;
-% %         %
-% %         % 			tempLocation = round( (rand*(params.N-1)) +1);
-% %         % 			if cue_dist(tempLocation) ~=0
-% %         % 				initial_param(i).L(t) = tempLocation;
-% %         % 				done=1;
-% %         % 			end
-% %         % 		end
-% %         % %
-% %         % % 		% c
-% %         % % 		done=0;
-% %         % % 		while done~=1
-% %         % % 			tempLocation = round( (rand*(params.N-1)) +1);
-% %         % % 			if params.pdist(tempLocation) ~=1
-% %         % % 				initial_param(i).c(t) = tempLocation;
-% %         % % 				done=1;
-% %         % % 			end
-% %         % % 		end
-% %         %
-% %         % 		%initial_param(i).L(t) = round( (rand*(params.N-1)) +1);
-% %         
-% %     end
-% end
 
 %%
 % Calling JAGS to sample
@@ -175,8 +111,6 @@ end
     'verbosity' , 0 , ...
     'cleanup' , 1 ,...
     'rndseed',1);
-%min_sec(toc);
-
 
 %%
 % Extract the MCMC samples and use them to calculate the performance

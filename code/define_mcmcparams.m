@@ -1,6 +1,7 @@
 function mcmcparams = define_mcmcparams(run_type, TRIALS)
 
 switch run_type
+	
 	case{'testing'}
 		
 		mcmcparams.doparallel=1;

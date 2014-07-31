@@ -12,9 +12,11 @@
 %%
 
 
-%function SCRIPTdetection(run_type)
+function SCRIPTyesno(run_type)
+% SCRIPTyesno('testing')
+
 %% Preliminaries
-clear, close all; clc
+close all; clc
 % add paths to dependencies
 addpath([cd '/funcs'])
 addpath([cd '/funcs/export_fig'])
@@ -22,7 +24,7 @@ addpath([cd '/funcs/latex_fig'])
 addpath([cd '/funcs/ColorBand'])
 plot_formatting_setup
 % are we doing a quick run, or a proper long run?
-run_type = 'testing'; % ['testing'|'publication']
+% run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
 
 %% Define parameters
@@ -31,7 +33,7 @@ T1=clock;
 
 switch run_type
     case{'testing'}
-        TRIALS              = 500;
+        TRIALS              = 100;
         list_of_variances   = 1./[4 1 0.25];
         dprime              = 1./list_of_variances;
         size_sizes          = [2 4 8];
@@ -67,10 +69,6 @@ hold all
 set(gca, 'ColorOrder', ColorSet); 
 plot(FAR,HR)
 format_axis_ROC
-% Axis properties
-set(gca, ...
-  'XTick'       , 0:0.25:1	, ...
-  'YTick'       , 0:0.25:1);
 legend('4, 1', '1, 4')
 legend(num2str(dprime'),...
 	'location','SouthEast')
@@ -110,16 +108,19 @@ hold all
 set(gca, 'ColorOrder', ColorSet); 
 plot(size_sizes,AUC,'.-',...
     'MarkerSize', 30)
+axis square
+
+title('Set size effects','FontSize',16)
 xlabel('set size')
 ylabel('AUC')
-axis square
+
 axis([1 max(size_sizes) 0.5 1])
 set(gca,'XTick',size_sizes)
-box off
+
 legend(num2str(dprime'),...
 	'location','NorthEast')
 legend boxoff
-title('Set size effects','FontSize',16)
+
 
 
 
@@ -149,47 +150,17 @@ varDistracter   = varA;
 % Plot the results
 figure(1)
 subplot(1,3,3)
+title('Search asymmetry','FontSize',16)
 plot(AB_FAR,AB_HR,'k')
 hold on
 plot(BA_FAR,BA_HR,'k:')
 format_axis_ROC
-% Axis properties
-set(gca, ...
-  'XTick'       , 0:0.25:1	, ...
-  'YTick'       , 0:0.25:1);
 legend('\sigma^2_T = 4, \sigma^2_D = 1',...
     '\sigma^2_T = 1, \sigma^2_D = 4',...
     'location','SouthEast')
 legend boxoff
-title('Search asymmetry','FontSize',16)
 
 
-
-
-
-%%
-
-
-% %% External noise -- THIS IS INCORRECT!!! We need variance on the actual stimulus
-% % Calculate AUC as a function of increasing distracter noise
-% N = 2;
-% varTarget = 1;
-% clear AUC
-% for n=1:numel(external_noise_variance_list)
-% 	% Grab the parameter value we are looking at
-% 	varDistracter		= external_noise_variance_list(n);
-% 	% Run the main MCMCdetection code given these parameter values
-% 	fprintf('job %d of %d: %s', n, numel(list_of_variances), datestr(now) )
-% 	[AUC(n), ~, ~]	= MCMCdetection(N, varTarget,varDistracter, TRIALS);
-% end
-% 
-% %%
-% % Plot the results
-% figure(1)
-% subplot(2,2,4)
-% plot(external_noise_variance_list,AUC,'-o')
-% title('INCORRECT','FontSize',16)
-% xlabel('Distracter')
 
 
 
@@ -205,7 +176,6 @@ min_sec(etime(T2,T1));
 %% Export the figure 
 
 % Automatic resizing to make figure appropriate for font size
-% Download from here http://www.mathworks.com/matlabcentral/fileexchange/36439-resizing-matlab-plots-for-publication-purposes-latex
 latex_fig(11, 7, 4)
 
 % save as a .fig file
@@ -216,21 +186,13 @@ switch run_type
 	case{'publication'}
 		cd('../plots')
 end
+
+% save as a .fig file
 hgsave('results_detection')
-cd(codedir)
 
-
-%%
-% If you download <http://www.mathworks.co.uk/matlabcentral/fileexchange/23629-exportfig export_fig.m>
-% from Mathworks File Exchange, then the following command can be used for 
-% publication quality figure export:
-codedir=cd;
-switch run_type
-	case{'testing'}
-		cd('../plots/testing')
-	case{'publication'}
-		cd('../plots')
-end
+% save as a .pdf and png file
 export_fig results_detection -png -pdf -m1
+
 cd(codedir)
 
+return
