@@ -11,7 +11,7 @@ function SCRIPTcuedYesNo(run_type)
 %close all; 
 figure(4), clf
 clc
-set(0,'DefaultFigureWindowStyle','docked') % 'docked' or 'normal'
+set(0,'DefaultFigureWindowStyle','normal') % 'docked' or 'normal'
 
 % add paths to dependencies
 addpath([cd '/funcs'])
@@ -27,7 +27,7 @@ T1=clock;
 %% Define parameters
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
-N_testing_trials = 100;
+N_testing_trials = 10000;
 T_publication_trials = 2000;
 switch run_type
     case{'testing'}
@@ -267,8 +267,8 @@ return
 function plotExperimentResults(expt, results, xVariable, xlabeltext)
 
 %
-x = getfield(expt, xVariable);
-
+% = getfield(expt, xVariable);
+x = expt.(xVariable); % <-- use of dynamic field name
 
 % plot output
 %ColorSet = ColorBand(numel(expt.variance_list)); % define line colours
