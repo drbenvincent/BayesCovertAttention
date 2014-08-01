@@ -27,7 +27,7 @@ T1=clock;
 %% Define parameters
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
-N_testing_trials		= 100;
+N_testing_trials		= 1000;
 T_publication_trials	= 2000;
 switch run_type
 	case{'testing'}
@@ -44,11 +44,11 @@ switch run_type
 		expt(n).TRIALS          = N_testing_trials;
 		expt(n).cue_validity_list    = 0.7; % FIXED, single value
 		expt(n).set_size_list   = [2 ];
-		expt(n).variance_list   = [0.1:0.5:10];
+		expt(n).variance_list   = [0.0625 0.125 0.25 0.5 1 2 4 8];
 		expt(n).run_type		= run_type;
 		
 		% Experiment 3
-		n=3
+		n=3;
 		expt(n).TRIALS          = N_testing_trials;
 		expt(n).cue_validity_list = [0.5 0.7];
 		expt(n).set_size_list   = [2:1:9];
@@ -86,9 +86,9 @@ end
 
 %% RUN EXPERIMENTS
 
-expt(1).results = EXPT1( expt(1) );
+%expt(1).results = EXPT1( expt(1) );
 expt(2).results = EXPT2( expt(2) );
-expt(3).results = EXPT3( expt(3) );
+%expt(3).results = EXPT3( expt(3) );
 
 
 
@@ -99,6 +99,14 @@ expt(3).results = EXPT3( expt(3) );
 T2=clock;
 min_sec(etime(T2,T1));
 etime(T2,T1)/60 ;% time in mins
+
+%% Save the output
+codedir=cd;
+cd('../output')
+fname=sprintf('cuedYesNo');
+save(fname,'expt')
+display('results saved')
+cd(codedir)
 
 %% Export the figure
 
@@ -297,7 +305,7 @@ drawnow
 	function plotStuff(x, y, xlabeltext, ylabeltext, titleText)
 		hold all, %set(gca, 'ColorOrder', ColorSet);
 		plot( x , y, '.-',...
-			'LineWidth', 2, 'MarkerSize', 15)
+			'LineWidth', 2, 'MarkerSize', 20)
 		xlabel(xlabeltext), ylabel(ylabeltext)
 		title(titleText)
 	end

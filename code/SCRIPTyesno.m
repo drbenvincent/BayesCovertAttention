@@ -53,9 +53,9 @@ N = 2;
 for n=1:numel(list_of_variances)
 	% Grab the parameter value we are looking at
 	variance				= list_of_variances(n);
-	% Run the main MCMCdetection code given these parameter values
+	% Run the main MCMCyesno code given these parameter values
 	fprintf('job %d of %d: %s\n', n, numel(list_of_variances), datestr(now) )
-	[~, FAR(:,n), HR(:,n)]	= MCMCdetection(N, variance,variance, TRIALS);
+	[~, FAR(:,n), HR(:,n)]	= MCMCyesno(N, variance,variance, TRIALS);
 end
 
 %%
@@ -95,7 +95,7 @@ for s=1:numel(size_sizes)
 		% pull out the parameters we are dealing with now
 		N					= size_sizes(s);
 		variance			= list_of_variances(v);
-		[AUC(s,v), ~, ~]	= MCMCdetection(N, variance, variance, TRIALS);
+		[AUC(s,v), ~, ~]	= MCMCyesno(N, variance, variance, TRIALS);
         job=job+1;
 	end
 end
@@ -138,13 +138,13 @@ varB = 1;
 % Search for A amongst B
 varTarget       = varA; 
 varDistracter   = varB;
-[AB_AUC, AB_FAR, AB_HR] = MCMCdetection(N, varTarget, varDistracter, TRIALS);
+[AB_AUC, AB_FAR, AB_HR] = MCMCyesno(N, varTarget, varDistracter, TRIALS);
 
 %%
 % Search for B amongst A
 varTarget       = varB; 
 varDistracter   = varA;
-[BA_AUC, BA_FAR, BA_HR] = MCMCdetection(N, varTarget, varDistracter, TRIALS);
+[BA_AUC, BA_FAR, BA_HR] = MCMCyesno(N, varTarget, varDistracter, TRIALS);
 
 %%
 % Plot the results
