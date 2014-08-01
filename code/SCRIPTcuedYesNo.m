@@ -20,6 +20,7 @@ addpath([cd '/funcs/latex_fig'])
 addpath([cd '/funcs/hline_vline'])
 plot_formatting_setup
 addpath([cd '/funcs/ColorBand'])
+addpath([cd '/funcs/bordertext'])
 % are we doing a quick run, or a proper long run?
 %run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
@@ -27,7 +28,7 @@ T1=clock;
 %% Define parameters
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
-N_testing_trials		= 1000;
+N_testing_trials		= 100;
 T_publication_trials	= 2000;
 switch run_type
 	case{'testing'}
@@ -35,16 +36,22 @@ switch run_type
 		n=1;
 		expt(n).TRIALS          = N_testing_trials;
 		expt(n).set_size_list	= 2; % FIXED, single value
-		expt(n).variance_list   = 1./[4 1 0.25];
-		expt(n).cue_validity_list= linspace(0.1,0.9,5);
+		expt(n).dp_list			= [1 2];
+		expt(n).variance_list	= (1./expt(n).dp_list).^2;
+		%expt(n).variance_list   = 1./[4 1 0.25];
+		%expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
+		expt(n).cue_validity_list= linspace(0.1,0.9,9);
 		expt(n).run_type		= run_type;
 		
 		% Experiment 2
 		n=2;
 		expt(n).TRIALS          = N_testing_trials;
 		expt(n).cue_validity_list    = 0.7; % FIXED, single value
-		expt(n).set_size_list   = [2 ];
-		expt(n).variance_list   = [0.0625 0.125 0.25 0.5 1 2 4 8];
+		expt(n).set_size_list   = [2 6];
+		expt(n).dp_list			= linspace(0.1,5,20);
+		expt(n).variance_list	= (1./expt(n).dp_list).^2;
+		%expt(n).variance_list   = [0.0625 0.125 0.25 0.5 1 2 4 8];
+		%expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
 		expt(n).run_type		= run_type;
 		
 		% Experiment 3
@@ -53,6 +60,7 @@ switch run_type
 		expt(n).cue_validity_list = [0.5 0.7];
 		expt(n).set_size_list   = [2:1:9];
 		expt(n).variance_list	= 1; % FIXED, single value
+		expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
 		expt(n).run_type		= run_type;
 	case{'publication'}
 		%                 % Experiment 1
@@ -86,9 +94,9 @@ end
 
 %% RUN EXPERIMENTS
 
-%expt(1).results = EXPT1( expt(1) );
+expt(1).results = EXPT1( expt(1) );
 expt(2).results = EXPT2( expt(2) );
-%expt(3).results = EXPT3( expt(3) );
+expt(3).results = EXPT3( expt(3) );
 
 
 
@@ -124,10 +132,10 @@ try
 	% save as a .fig file
 	hgsave('results_cued_yesno')
 	% save as .png and .pdf files
-	figure(4), latex_fig(11, 8, 3), export_fig results_cued_yesno -png  -m1
-	figure(1), latex_fig(11, 8, 3), export_fig results_cued_yesnoEXPT1 -png -m1
-	figure(2), latex_fig(11, 8, 3), export_fig results_cued_yesnoEXPT2 -png -m1
-	figure(3), latex_fig(11, 8, 3), export_fig results_cued_yesnoEXPT3 -png -m1
+	figure(4), latex_fig(10, 8, 4), export_fig results_cued_yesno -png  -m1
+	figure(1), latex_fig(10, 8, 4), export_fig results_cued_yesnoEXPT1 -png -m1
+	figure(2), latex_fig(10, 8, 4), export_fig results_cued_yesnoEXPT2 -png -m1
+	figure(3), latex_fig(10, 8, 4), export_fig results_cued_yesnoEXPT3 -png -m1
 	cd(codedir)
 catch
 	cd(codedir)
@@ -150,7 +158,7 @@ plotExperimentResults(expt, results, 'cue_validity_list', 'cue validity')
 figure(4), subplot(1,3,1)
 hold on,% set(gca, 'ColorOrder', ColorSet);
 plot( expt.cue_validity_list.*100 ,...
-	results.AUC_valid_present-results.AUC_invalid_present,...
+	results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('cue validity')
@@ -173,12 +181,14 @@ function results = EXPT2(expt)
 results = doParameterSweep(expt);
 
 figure(2), clf
-plotExperimentResults(expt, results, 'variance_list', '\sigma ^2')
+%plotExperimentResults(expt, results, 'variance_list', '\sigma ^2')
+plotExperimentResults(expt, results, 'dp_list', 'd''')
 
 figure(4), subplot(1,3,2)
 hold on, %set(gca, 'ColorOrder', ColorSet);
-dprime = 1./expt.variance_list
-plot( expt.variance_list , results.AUC_valid_present-results.AUC_invalid_present, '.-', 'LineWidth', 2, 'MarkerSize', 20)
+
+plot( expt.dp_list , results.validHR-results.invalidHR,...
+	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('noise variance')
 ylabel('cuing effect')
@@ -212,7 +222,8 @@ plotExperimentResults(expt, results, 'set_size_list', 'N')
 
 figure(4), subplot(1,3,3)
 hold on, %set(gca, 'ColorOrder', ColorSet);
-plot( expt.set_size_list , (results.AUC_valid_present'-results.AUC_invalid_present'), '.-', 'LineWidth', 2, 'MarkerSize', 20)
+plot( expt.set_size_list , results.validHR-results.invalidHR,...
+	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('set size')
 ylabel('cuing effect')
@@ -230,6 +241,8 @@ end
 
 
 function results=doParameterSweep(expt)
+
+tic
 
 mcmcparams	= define_mcmcparams(expt.run_type, expt.TRIALS);
 jobCount	= 1;
@@ -265,6 +278,7 @@ results.AUC_invalid_present = squeeze(AUC_invalid_present);
 results.validHR				= squeeze(validHR);
 results.invalidHR			= squeeze(invalidHR);
 
+min_sec(toc);
 end
 
 
@@ -308,6 +322,10 @@ drawnow
 			'LineWidth', 2, 'MarkerSize', 20)
 		xlabel(xlabeltext), ylabel(ylabeltext)
 		title(titleText)
+		
+		% append info
+		dt = datestr(now,'yyyy mmm dd, HH:MM AM');
+		bordertext('figurebottomright', [mfilename ' ' dt]);
 	end
 
 end

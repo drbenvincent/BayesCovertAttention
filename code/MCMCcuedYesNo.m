@@ -123,7 +123,7 @@ end
 % Calculate the decision variable for all trials. This is the posterior
 % probability of the L indicating target presence, i.e. L={1,...,N} and not
 % L=N+1 (indicating target absence).
-tic
+
 % preallocate
 Ppresent = zeros(params.T,1);
 response = zeros(params.T,1);
@@ -149,7 +149,7 @@ for t=1:params.T
 		response(t)=0;
 	end
 end
-display('time to calculate decision variable'), toc
+
 
 
 % new ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -188,15 +188,16 @@ for t=1:params.T
 	end
 	
 end
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-nValidHits
-nValidPresent
+% nValidHits
+% nValidPresent
 validHR = nValidHits / nValidPresent;
 
-nInvalidHits
-nInvalidPresent
+% nInvalidHits
+% nInvalidPresent
 invalidHR = nInvalidHits / nInvalidPresent;
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 
 
 

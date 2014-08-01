@@ -3,7 +3,7 @@
 %%
 
 
-function [AUC, FAR, HR] = MCMCyesno(mcmcparams, N, varT, varD, TRIALS)
+function [AUC, FAR, HR] = MCMCyesno(mcmcparams, N, varT, varD)
 % [AUC, FAR, HR] = MCMCyesno(2, 1, 4, 10000)
 
 
@@ -37,12 +37,6 @@ data.varD       = varD;
 % Construct a prior over display type
 data.Dprior		= [prob_present.*(ones(data.N,1)/data.N) ; (1-prob_present)]';
 
-
-%%
-% Set parameters for JAGS
-nchains  = 1;		% How Many Chains?
-nburnin  = 1000;	% How Many Burn-in Samples?
-nsamples = TRIALS;	% How Many Recorded Samples? THIS IS HOW MANY SIMULATED TRIALS WE WANT
 
 %%
 % Set initial values for latent variable in each chain
@@ -90,10 +84,7 @@ T = size(x,2);
 data.x		= x;
 data.T		= T; 
 
-% Defining some MCMC parameters for JAGS
-nchains  = 2; % How Many Chains? just because I have 4 cores
-nburnin  = 500; % How Many Burn-in Samples?
-nsamples = 1000;  % How Many Recorded Samples?
+
 
 % Set initial values for latent variable in each chain
 clear initial_param
@@ -111,15 +102,15 @@ end
     data, ...							% Observed data   
     fullfile(pwd, JAGSmodel), ...		% File that contains model definition
     initial_param, ...					% Initial values for latent variables
-    'doparallel' , 1, ...      % Parallelization flag
-    'nchains', nchains,...              % Number of MCMC chains
-    'nburnin', nburnin,...              % Number of burnin steps
-    'nsamples', nsamples, ...           % Number of samples to extract
+    'doparallel' , mcmcparams.doparallel, ...      % Parallelization flag
+    'nchains', mcmcparams.infer.nchains,...              % Number of MCMC chains
+    'nburnin', mcmcparams.infer.nburnin,...              % Number of burnin steps
+    'nsamples', mcmcparams.infer.nsamples, ...           % Number of samples to extract
     'thin', 1, ...                      % Thinning parameter
     'monitorparams', {'D'}, ...     % List of latent variables to monitor
     'savejagsoutput' , 0 , ...          % Save command line output produced by JAGS?
-    'verbosity' , 0 , ...               % 0=do not produce any output; 1=minimal text output; 2=maximum text output
-    'cleanup' , 0,...% clean up of temporary files?
+    'verbosity' , 1 , ...               % 0=do not produce any output; 1=minimal text output; 2=maximum text output
+    'cleanup' , 1,...% clean up of temporary files?
     'rndseed',1);                    
 
 
