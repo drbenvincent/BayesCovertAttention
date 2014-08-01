@@ -27,8 +27,8 @@ T1=clock;
 %% Define parameters
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
-N_testing_trials = 100;
-T_publication_trials = 2000;
+N_testing_trials		= 100;
+T_publication_trials	= 2000;
 switch run_type
 	case{'testing'}
 		% Experiment 1
@@ -86,9 +86,9 @@ end
 
 %% RUN EXPERIMENTS
 
-EXPT1( expt(1) )
-EXPT2( expt(2) )
-EXPT3( expt(3) )
+expt(1).results = EXPT1( expt(1) );
+expt(2).results = EXPT2( expt(2) );
+expt(3).results = EXPT3( expt(3) );
 
 
 
@@ -131,7 +131,7 @@ end
 
 
 
-function EXPT1(expt)
+function results = EXPT1(expt)
 %% EXPERIMENT 1
 
 results = doParameterSweep(expt);
@@ -159,13 +159,13 @@ end
 
 
 
-function EXPT2(expt)
+function results = EXPT2(expt)
 %% EXPERIMENT 2
 
 results = doParameterSweep(expt);
 
 figure(2), clf
-plotExperimentResults(expt, results, 'variance_list', '\sigma^2')
+plotExperimentResults(expt, results, 'variance_list', '\sigma ^2')
 
 figure(4), subplot(1,3,2)
 hold on, %set(gca, 'ColorOrder', ColorSet);
@@ -194,7 +194,7 @@ end
 
 
 
-function EXPT3(expt)
+function results = EXPT3(expt)
 %% EXPERIMENT 3
 
 results = doParameterSweep(expt);
@@ -272,23 +272,25 @@ x = expt.(xVariable); % <-- use of dynamic field name
 
 % plot output for AUC ~~~~~~~~~~~~~~~~~~~
 subplot(2,3,1)
-plotStuff(x, results.AUC, xlabeltext, 'AUC', 'present/absent')
+plotStuff(x, results.AUC_valid_present, xlabeltext, 'AUC', 'valid')
 
 subplot(2,3,2)
-plotStuff(x, results.AUC_valid_present, xlabeltext, '', 'valid/present')
+plotStuff(x, results.AUC_invalid_present, xlabeltext, 'AUC', 'invalid')
 
 subplot(2,3,3)
-plotStuff(x, results.AUC_invalid_present, xlabeltext, '', 'invalid/present')
+plotStuff(x, results.AUC_valid_present - results.AUC_invalid_present,...
+	xlabeltext, 'AUC', 'cueing benefit')
 
 % plot output for hit rates ~~~~~~~~~~~~~~~~~~~
 subplot(2,3,4)
-plotStuff(x, results.validHR, xlabeltext, '', 'validHR')
+plotStuff(x, results.validHR, xlabeltext, 'HR', 'valid')
 
 subplot(2,3,5)
-plotStuff(x, results.invalidHR, xlabeltext, '', 'valid/present')
+plotStuff(x, results.invalidHR, xlabeltext, 'HR', 'invalid')
 
 subplot(2,3,6)
-plotStuff(x, results.validHR-results.invalidHR, xlabeltext, '', 'cueing benefit HR')
+plotStuff(x, results.validHR-results.invalidHR,...
+	xlabeltext, 'HR', 'cueing benefit HR')
 
 drawnow
 
