@@ -28,7 +28,7 @@ T1=clock;
 %% Define parameters
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
-N_testing_trials		= 10000;
+N_testing_trials		= 1000;
 T_publication_trials	= 2000;
 switch run_type
 	case{'testing'}
@@ -132,7 +132,7 @@ try
 	% save as a .fig file
 	hgsave('results_cued_yesno')
 	% save as .png and .pdf files
-	figure(4), latex_fig(10, 8, 4), export_fig results_cued_yesno -png  -m1
+	figure(4), latex_fig(10, 8, 3), export_fig results_cued_yesno -png  -m1
 	figure(1), latex_fig(10, 8, 4), export_fig results_cued_yesnoEXPT1 -png -m1
 	figure(2), latex_fig(10, 8, 4), export_fig results_cued_yesnoEXPT2 -png -m1
 	figure(3), latex_fig(10, 8, 4), export_fig results_cued_yesnoEXPT3 -png -m1
@@ -163,17 +163,17 @@ plot( expt.cue_validity_list.*100 ,...
 %ylim([0 1])
 xlabel('cue validity')
 ylabel('cuing effect')
-%title('invalid/present')
+
+% text for fixed parameter
+fixed = sprintf('N = %d', expt.set_size_list);
+bordertext('topleft', fixed);
 
 legend(num2str(expt.variance_list'))
+legend('Location','NorthEast')
 
 drawnow
 
 end
-
-
-
-
 
 function results = EXPT2(expt)
 %% EXPERIMENT 2
@@ -192,25 +192,17 @@ plot( expt.dp_list , results.validHR-results.invalidHR,...
 %ylim([0 1])
 xlabel('noise variance')
 ylabel('cuing effect')
-%title('invalid/present')
+
+% text for fixed parameter
+fixed = sprintf('v = %d', expt.cue_validity_list);
+bordertext('topleft', fixed);
 
 legend(num2str(expt.set_size_list'))
+legend('Location','NorthEast')
 
 drawnow
 
 end
-
-
-
-
-
-
-
-
-
-
-
-
 
 function results = EXPT3(expt)
 %% EXPERIMENT 3
@@ -227,17 +219,17 @@ plot( expt.set_size_list , results.validHR-results.invalidHR,...
 %ylim([0 1])
 xlabel('set size')
 ylabel('cuing effect')
-%title('invalid/present')
+
+% text for fixed parameter
+fixed = sprintf('variance = %1.1f', expt.variance_list);
+bordertext('topleft', fixed);
 
 legend(num2str(expt.cue_validity_list'))
+legend('Location','NorthEast')
 
 drawnow
 
 end
-
-
-
-
 
 
 function results=doParameterSweep(expt)
@@ -282,12 +274,7 @@ min_sec(toc);
 end
 
 
-
-
-
-
 function plotExperimentResults(expt, results, xVariable, xlabeltext)
-
 %
 % = getfield(expt, xVariable);
 x = expt.(xVariable); % <-- use of dynamic field name
