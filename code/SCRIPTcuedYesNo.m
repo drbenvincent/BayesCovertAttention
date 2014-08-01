@@ -28,7 +28,7 @@ T1=clock;
 %% Define parameters
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
-N_testing_trials		= 100;
+N_testing_trials		= 10000;
 T_publication_trials	= 2000;
 switch run_type
 	case{'testing'}
