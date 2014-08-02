@@ -2,8 +2,7 @@
 %
 %%
 
-function [AUC, AUC_valid_present, AUC_invalid_present, ...
-	validHR, invalidHR] = MCMCcuedYesNo(mcmcparams, N, variance, cue_validity, TRIALS)
+function [validHR, invalidHR] = MCMCcuedYesNo(mcmcparams, N, variance, cue_validity, TRIALS)
 %  N=4; variance = 1; cue_validity=0.5; TRIALS =1000;
 
 %% Preliminaries
@@ -201,119 +200,50 @@ invalidHR = nInvalidHits / nInvalidPresent;
 
 
 
-% From step 2, we have calculated the posterior distribution over L, for
-% each trial, $P(L,x|params)$. If we were dealing with a real experimental
-% participant, all we could observe would be their behavioural response,
-% but because this is an optimal observer model we have direct access to
-% their posterior distribution over target presence/absence. This can be used
-% in order to generate ROC curves.
-%
-% The approach will be to extract the posterior probability of target
-% presence for signal (target present) and noise (target absent) trials,
-% and then use this to calculate an ROC curve by considering a large number
-% of potential decision thresholds.
-%
-
-
-% First, create binary vectors to label the signal (target present) and noise
-% (target absent) trials.
-present_trials	= dataset.D<=params.N;
-absent_trials	= dataset.D==params.N+1;
-
-% % There should be about `(cue_validity*0.5)*TRIALS` valid present trials
-% valid_present_trials = dataset.D==dataset.c;
-% % There should be about `((1-cue_validity)*0.5)*TRIALS` invalid present trials
-% %invalid_present_trials = dataset.D~=dataset.c; %<--- incorrect
-% %invalid_present_trials = dataset.D(present_trials)~=dataset.c(present_trials);
-% invalid_present_trials = dataset.D(present_trials==1)~=dataset.c(present_trials==1);
-% invalid_present_trials = (dataset.D~=dataset.c)==1 && present_trials==1;
+% % First, create binary vectors to label the signal (target present) and noise
+% % (target absent) trials.
+% present_trials	= dataset.D<=params.N;
+% absent_trials	= dataset.D==params.N+1;
 % 
 % 
-% %% Calculate the valid hit rate, and invalid hit rate
+% %% 
+% % Grab the decision variables for the signal and the noise trials
+% S = Ppresent(present_trials);
+% N = Ppresent(absent_trials);
+% % Use that to calculate ROC curve with the function
+% % |ROC_calcHRandFAR_VECTORIZED|.
+% [HR, FAR, AUC]=ROC_calcHRandFAR_VECTORIZED(N,S);
 % 
-% % old code
-% NvalidPresent = sum(valid_present_trials);
-% NinvalidPresent = sum(invalid_present_trials);
+% % Grab the decision variables for the signal and the noise trials
 % 
-% %all_hits	= present_trials' == response;
-% %all_hits	= present_trials(response==1);
-% 
-% nValidHits		= sum(valid_present_trials(response==1));
-% validHR			= nValidHits / NvalidPresent;
-% 
-% nInvalidHits	= sum( dataset.D(present_trials(response==1))~=dataset.c(present_trials(response==1)) );
-% invalidHR		= nInvalidHits / NinvalidPresent; 
-% 
+% % old
+% % VP = Ppresent(valid_present_trials);
+% % IP = Ppresent(invalid_present_trials);
 % % new
-% % NvalidPresent	= sum(valid_present_trials==1);
-% % NvalidHits		= sum(valid_present_trials(response==1)==1);
-% % validHR			= NvalidHits/NvalidPresent;
-% % 
-% % NinvalidPresent	= sum(invalid_present_trials==1);
-% % NinvalidHits		= sum(invalid_present_trials(response==1)==1);
-% % invalidHR			= NinvalidHits/NinvalidPresent;
-% % 
+% VP = Ppresent(setValidHitTrials==1);
+% IP = Ppresent(setInvalidHitTrials==1);
 % 
-% % % set counters
-% % FA=0;
-% % CR=0;
-% % vHIT=0; iHIT =0;
-% % vMISS=0; iMISS=0;
-% % for t=1:params.T
-% % 	% false alarms
-% % 	if dataset.D(t)==N+1 && response(t)==1
-% % 		FA = FA+1;
-% % 	end
-% % 	
-% % 	% valid hits
-% % 	if dataset.D(t)==dataset.c(t) && dataset.D(t)<N+1 && response(t)==1
-% % 		vHIT = vHIT+1;
-% % 	end
-% % 	
-% % 	% invalid hits
-% % 	if dataset.D(t)~=dataset.c(t) && dataset.D(t)<N+1 && response(t)==1
-% % 		iHIT = iHIT+1;
-% % 	end
-% % end
-
-%% 
-% Grab the decision variables for the signal and the noise trials
-S = Ppresent(present_trials);
-N = Ppresent(absent_trials);
-% Use that to calculate ROC curve with the function
-% |ROC_calcHRandFAR_VECTORIZED|.
-[HR, FAR, AUC]=ROC_calcHRandFAR_VECTORIZED(N,S);
-
-% Grab the decision variables for the signal and the noise trials
-
-% old
-% VP = Ppresent(valid_present_trials);
-% IP = Ppresent(invalid_present_trials);
-% new
-VP = Ppresent(setValidHitTrials==1);
-IP = Ppresent(setInvalidHitTrials==1);
-
-
-
-% Use that to calculate ROC curve with the function
-% |ROC_calcHRandFAR_VECTORIZED|.
-[HR, FAR, AUC_valid_present]=ROC_calcHRandFAR_VECTORIZED(N,VP);
-
-figure(5), clf
-subplot(2,2,1), hist_compare(N,VP,linspace(0,1,50))
-xlabel('P(present)')
-title('valid')
-
-subplot(2,2,3), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
-
-[HR, FAR, AUC_invalid_present]=ROC_calcHRandFAR_VECTORIZED(N,IP);
-
-subplot(2,2,2), hist_compare(N,IP,linspace(0,1,50))
-xlabel('decision variable, P(present)')
-title('invalid')
-
-subplot(2,2,4), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
-
-drawnow
+% 
+% 
+% % Use that to calculate ROC curve with the function
+% % |ROC_calcHRandFAR_VECTORIZED|.
+% [HR, FAR, AUC_valid_present]=ROC_calcHRandFAR_VECTORIZED(N,VP);
+% 
+% figure(5), clf
+% subplot(2,2,1), hist_compare(N,VP,linspace(0,1,50))
+% xlabel('P(present)')
+% title('valid')
+% 
+% subplot(2,2,3), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
+% 
+% [HR, FAR, AUC_invalid_present]=ROC_calcHRandFAR_VECTORIZED(N,IP);
+% 
+% subplot(2,2,2), hist_compare(N,IP,linspace(0,1,50))
+% xlabel('decision variable, P(present)')
+% title('invalid')
+% 
+% subplot(2,2,4), plot(FAR, HR), hold on, plot([0 1],[0 1],'k-')
+% 
+% drawnow
 
 return

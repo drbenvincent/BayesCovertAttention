@@ -2,9 +2,9 @@
 %
 %%
 
-function SCRIPTcuedYesNo(run_type)
-% SCRIPTcuedYesNo('testing')
-% SCRIPTcuedYesNo('publication')
+function SCRIPTcuedYesNo(TRIALS, run_type)
+% SCRIPTcuedYesNo(100, 'testing')
+% SCRIPTcuedYesNo(50000, 'publication')
 
 %% Preliminaries
 %clear,
@@ -26,67 +26,38 @@ addpath([cd '/funcs/bordertext'])
 T1=clock;
 
 %% Define parameters
-% Select parameters to use based on if we are quick testing (faster
-% computation times) or final runs (will take a while to compute).
-N_testing_trials		= 1000;
-T_publication_trials	= 2000;
-switch run_type
-	case{'testing'}
-		% Experiment 1
-		n=1;
-		expt(n).TRIALS          = N_testing_trials;
-		expt(n).set_size_list	= 2; % FIXED, single value
-		expt(n).dp_list			= [1 2];
-		expt(n).variance_list	= (1./expt(n).dp_list).^2;
-		%expt(n).variance_list   = 1./[4 1 0.25];
-		%expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
-		expt(n).cue_validity_list= linspace(0.1,0.9,9);
-		expt(n).run_type		= run_type;
-		
-		% Experiment 2
-		n=2;
-		expt(n).TRIALS          = N_testing_trials;
-		expt(n).cue_validity_list    = 0.7; % FIXED, single value
-		expt(n).set_size_list   = [2 6];
-		expt(n).dp_list			= linspace(0.1,5,20);
-		expt(n).variance_list	= (1./expt(n).dp_list).^2;
-		%expt(n).variance_list   = [0.0625 0.125 0.25 0.5 1 2 4 8];
-		%expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
-		expt(n).run_type		= run_type;
-		
-		% Experiment 3
-		n=3;
-		expt(n).TRIALS          = N_testing_trials;
-		expt(n).cue_validity_list = [0.5 0.7];
-		expt(n).set_size_list   = [2:1:9];
-		expt(n).variance_list	= 1; % FIXED, single value
-		expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
-		expt(n).run_type		= run_type;
-	case{'publication'}
-		%                 % Experiment 1
-		% 		n=1;
-		%         expt(n).TRIALS          = T_publication_trials;
-		%         expt(n).N               = 2; % FIXED
-		%         expt(n).variance_list   = 1./[4 1 0.25];
-		%         expt(n).cue_validity_list= linspace(0.1,0.9,5);
-		% 		expt(n).run_type		= run_type;
-		%
-		%         % Experiment 2
-		% 		n=2;
-		%         expt(n).TRIALS          = T_publication_trials;
-		% 		expt(n).cue_validity    = 0.7; % FIXED
-		%         expt(n).set_size_list   = [2 8];
-		%         expt(n).variance_list   = [0.1:0.2:10];
-		% 		expt(n).run_type		= run_type;
-		%
-		% 		% Experiment 3
-		% 		n=3;
-		%         expt(n).TRIALS          = T_publication_trials;
-		% 		expt(n).cue_validity_list = [0.5 0.7];
-		%         expt(n).set_size_list   = [2:1:9];
-		%         expt(n).variance		= 1; % FIXED
-		% 		expt(n).run_type		= run_type;
-end
+
+% Experiment 1
+n=1;
+expt(n).TRIALS          = TRIALS;
+expt(n).set_size_list	= 2; % FIXED, single value
+expt(n).dp_list			= [1 2];
+expt(n).variance_list	= (1./expt(n).dp_list).^2;
+%expt(n).variance_list   = 1./[4 1 0.25];
+%expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
+expt(n).cue_validity_list= linspace(0.1,0.9,9);
+expt(n).run_type		= run_type;
+
+% Experiment 2
+n=2;
+expt(n).TRIALS          = TRIALS;
+expt(n).cue_validity_list    = 0.7; % FIXED, single value
+expt(n).set_size_list   = [2 6];
+expt(n).dp_list			= linspace(0.1,5,20);
+expt(n).variance_list	= (1./expt(n).dp_list).^2;
+%expt(n).variance_list   = [0.0625 0.125 0.25 0.5 1 2 4 8];
+%expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
+expt(n).run_type		= run_type;
+
+% Experiment 3
+n=3;
+expt(n).TRIALS          = TRIALS;
+expt(n).cue_validity_list = [0.5 0.7];
+expt(n).set_size_list   = [2:1:9];
+expt(n).variance_list	= 1; % FIXED, single value
+expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
+expt(n).run_type		= run_type;
+
 
 
 
@@ -129,13 +100,23 @@ try
 		case{'publication'}
 			cd('../plots')
 	end
-	% save as a .fig file
+
+	% save as figures
+	figure(4), latex_fig(10, 8, 2)
+	export_fig results_cued_yesno -png -pdf -m1
 	hgsave('results_cued_yesno')
-	% save as .png and .pdf files
-	figure(4), latex_fig(10, 8, 3), export_fig results_cued_yesno -png  -m1
-	figure(1), latex_fig(10, 8, 4), export_fig results_cued_yesnoEXPT1 -png -m1
-	figure(2), latex_fig(10, 8, 4), export_fig results_cued_yesnoEXPT2 -png -m1
-	figure(3), latex_fig(10, 8, 4), export_fig results_cued_yesnoEXPT3 -png -m1
+	
+	figure(1), latex_fig(10, 8, 2)
+	export_fig results_cued_yesnoEXPT1 -png -pdf -m1
+	hgsave('results_cued_yesnoEXPT1')
+	
+	figure(2), latex_fig(10, 8, 2)
+	export_fig results_cued_yesnoEXPT2 -png -pdf -m1
+	hgsave('results_cued_yesnoEXPT2')
+	
+	figure(3), latex_fig(10, 8, 2)
+	export_fig results_cued_yesnoEXPT3 -png -pdf -m1
+	hgsave('results_cued_yesnoEXPT3')
 	cd(codedir)
 catch
 	cd(codedir)
@@ -162,7 +143,7 @@ plot( expt.cue_validity_list.*100 ,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('cue validity')
-ylabel('cuing effect')
+ylabel('cuing effect (HR_{valid}-HR_{invalid})')
 
 % text for fixed parameter
 fixed = sprintf('N = %d', expt.set_size_list);
@@ -191,10 +172,10 @@ plot( expt.dp_list , results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('noise variance')
-ylabel('cuing effect')
+ylabel('cuing effect (HR_{valid}-HR_{invalid})')
 
 % text for fixed parameter
-fixed = sprintf('v = %d', expt.cue_validity_list);
+fixed = sprintf('v = %1.1f', expt.cue_validity_list)
 bordertext('topleft', fixed);
 
 legend(num2str(expt.set_size_list'))
@@ -218,7 +199,7 @@ plot( expt.set_size_list , results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('set size')
-ylabel('cuing effect')
+ylabel('cuing effect (HR_{valid}-HR_{invalid})')
 
 % text for fixed parameter
 fixed = sprintf('variance = %1.1f', expt.variance_list);
@@ -254,8 +235,7 @@ for n=1:numel(expt.set_size_list)
 			fprintf('job %d of %d: %s\n', jobCount, nJobs)
 			
 			% run the main MCMC code with these parameters
-			[AUC(n,cv,v), AUC_valid_present(n,cv,v), AUC_invalid_present(n,cv,v),...
-				validHR(n,cv,v), invalidHR(n,cv,v)]=...
+			[validHR(n,cv,v), invalidHR(n,cv,v)]=...
 				MCMCcuedYesNo(mcmcparams, N, variance, cue_validity, expt.TRIALS);
 			
 			jobCount = jobCount + 1;
@@ -264,9 +244,9 @@ for n=1:numel(expt.set_size_list)
 end
 
 % return results
-results.AUC					= squeeze(AUC);
-results.AUC_valid_present	= squeeze(AUC_valid_present);
-results.AUC_invalid_present = squeeze(AUC_invalid_present);
+% results.AUC					= squeeze(AUC);
+% results.AUC_valid_present	= squeeze(AUC_valid_present);
+% results.AUC_invalid_present = squeeze(AUC_invalid_present);
 results.validHR				= squeeze(validHR);
 results.invalidHR			= squeeze(invalidHR);
 
@@ -279,27 +259,27 @@ function plotExperimentResults(expt, results, xVariable, xlabeltext)
 % = getfield(expt, xVariable);
 x = expt.(xVariable); % <-- use of dynamic field name
 
-% plot output for AUC ~~~~~~~~~~~~~~~~~~~
-subplot(2,3,1)
-plotStuff(x, results.AUC_valid_present, xlabeltext, 'AUC', 'valid')
-
-subplot(2,3,2)
-plotStuff(x, results.AUC_invalid_present, xlabeltext, 'AUC', 'invalid')
-
-subplot(2,3,3)
-plotStuff(x, results.AUC_valid_present - results.AUC_invalid_present,...
-	xlabeltext, 'AUC', 'cueing benefit')
+% % plot output for AUC ~~~~~~~~~~~~~~~~~~~
+% subplot(2,3,1)
+% plotStuff(x, results.AUC_valid_present, xlabeltext, 'AUC', 'valid')
+% 
+% subplot(2,3,2)
+% plotStuff(x, results.AUC_invalid_present, xlabeltext, 'AUC', 'invalid')
+% 
+% subplot(2,3,3)
+% plotStuff(x, results.AUC_valid_present - results.AUC_invalid_present,...
+% 	xlabeltext, 'AUC', 'cueing benefit')
 
 % plot output for hit rates ~~~~~~~~~~~~~~~~~~~
-subplot(2,3,4)
-plotStuff(x, results.validHR, xlabeltext, 'HR', 'valid')
+subplot(1,3,1)
+plotStuff(x, results.validHR, xlabeltext, 'HR', 'valid-cue trials')
 
-subplot(2,3,5)
-plotStuff(x, results.invalidHR, xlabeltext, 'HR', 'invalid')
+subplot(1,3,2)
+plotStuff(x, results.invalidHR, xlabeltext, 'HR', 'invalid-cue trials')
 
-subplot(2,3,6)
+subplot(1,3,3)
 plotStuff(x, results.validHR-results.invalidHR,...
-	xlabeltext, 'HR', 'cueing benefit HR')
+	xlabeltext, 'cuing effect (HR_{valid}-HR_{invalid})', '')
 
 drawnow
 
