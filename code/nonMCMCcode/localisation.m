@@ -8,8 +8,9 @@ tic
 
 %% set up variables for all simulations
 set_size_list = [2 4];
-sigma_list = [0.5 1 2];
-expectation_list = linspace(0,1,21);
+variance_list = [0.25 1 4];
+sigma_list = sqrt(variance_list);
+sp_list = linspace(0,1,21);
 
 %% Run through all simulations
 for ss = 1:numel(set_size_list)
@@ -18,8 +19,8 @@ for ss = 1:numel(set_size_list)
 	for stdev = 1:numel(sigma_list)
 		sigma = sigma_list(stdev);
 		
-		for ex = 1:numel(expectation_list)
-			expec = expectation_list(ex);
+		for ex = 1:numel(sp_list)
+			expec = sp_list(ex);
 			
 			% CALCULATE PERFORMANCE FOR THESE PARAMETER VALUES ------------
 			PC(ss,stdev,ex) = localisationPC(N, sigma, T, expec);
@@ -29,14 +30,45 @@ for ss = 1:numel(set_size_list)
 	end
 	
 	% plot results for this set size
+	% 	subplot(1, numel(set_size_list),ss)
+	% 	plot(expectation_list, squeeze(PC(ss,:,:))',...
+	% 		'LineWidth',10)
+	% 	title(sprintf('N = %d', N))
+	% 	ylim([0 1])
+	% 	hline(1/N)
+	% 	box off
+	% 	hold on
+	% 	drawnow
+	
+	ColorSet = ColorBand(numel(variance_list)); % define line colours
+
 	subplot(1, numel(set_size_list),ss)
-	plot(expectation_list, squeeze(PC(ss,:,:))',...
-		'LineWidth',10)
-	title(sprintf('N = %d', N))
-	ylim([0 1])
+	hold all
+	set(gca, 'ColorOrder', ColorSet);
+	plot( sp_list.*100 , squeeze(PC(ss,:,:))', '-',...
+		'LineWidth', 10,...
+		'MarkerSize', 50)
 	hline(1/N)
-	box off
-	hold on
+	
+	% formatting
+	set(gca,'PlotBoxAspectRatio',[1 1 1],...
+		'box', 'off',...
+		'xlim', [0 100],...
+		'ylim', [0 1],...
+		'XTick',[0:25:100],...
+		'YTick',[0:0.25:1])
+	xlabel('expectation (%)')
+	ylabel('proportion correct')
+	title(['set size = ' num2str(N)],'FontSize',16)
+	% legend
+	h = legend(num2str(variance_list'),...
+		'location','SouthEast');
+	legend boxoff
+	% v = get(h,'title');
+	% set(v,'string','\sigma^2');
+	
+	axis square
+	
 	drawnow
 	
 end
@@ -74,5 +106,5 @@ for t=1:T
 		correct = correct + 1;
 	end
 end
-PC = sum(correct)/T;
+PC = correct/T;
 end

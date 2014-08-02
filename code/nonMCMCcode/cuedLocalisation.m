@@ -25,7 +25,7 @@ for ss = 1:numel(set_size_list)
 	
 	% plot results for this set size
 	subplot(1, numel(set_size_list),ss)
-	plot(cueValidityList, squeeze(PC(ss,:,:))',...
+	plot(cueValidityList*100, squeeze(PC(ss,:,:))',...
 		'k-')
 	drawnow	
 end
@@ -66,5 +66,5 @@ for t=1:T
 		correct = correct + 1;
 	end
 end
-PC = sum(correct)/T;
+PC = correct/T;
 end

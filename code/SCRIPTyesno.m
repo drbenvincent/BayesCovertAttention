@@ -35,7 +35,7 @@ switch run_type
     case{'testing'}
         TRIALS              = 100;
         list_of_variances   = 1./[4 1 0.25];
-        dprime              = 1./list_of_variances;
+        dprime              = 1./list_of_variances; % <--- THIS IS INCORRECT
         size_sizes          = [2 4 8];
         external_noise_variance_list = [0.5 1 2 4 8];
     case{'publication'}
