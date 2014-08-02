@@ -52,3 +52,7 @@ hgsave('results_detection')
 % save as a .pdf and png file
 export_fig results_detection -png -pdf -m1
 cd(codedir)
+
+
+%% CUED yes/no task
+cuedYesNo(1000)

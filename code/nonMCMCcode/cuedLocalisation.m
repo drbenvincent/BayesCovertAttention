@@ -1,4 +1,4 @@
-function PC = cuedLocalisation(T)
+function cuedLocalisation(T)
 % PC = cuedLocalisation(1000)
 
 tic
@@ -18,7 +18,7 @@ for ss = 1:numel(set_size_list)
 		for v = 1:numel(cueValidityList)
 			expec = cueValidityList(v);
 			% CALCULATE PERFORMANCE FOR THESE PARAMETER VALUES ------------
-			PC(ss,stdev,v) = cuedLocalisationPC(N, sigma, T, expec);
+			PC(ss,stdev,v) = cuedLocalisationJob(N, sigma, T, expec);
 			% -------------------------------------------------------------
 		end
 	end
@@ -35,7 +35,7 @@ min_sec(toc);
 end
 
 
-function PC = cuedLocalisationPC(N, sigma, T, cueValidity)
+function PC = cuedLocalisationJob(N, sigma, T, cueValidity)
 
 uniformDist = ones(1,N)/N;				% prior over cue location
 xMu = eye(N);							% deterministic p(xmu|D)
