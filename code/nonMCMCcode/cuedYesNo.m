@@ -15,7 +15,7 @@ expt(n).dp_list			= [1 2];
 expt(n).variance_list	= (1./expt(n).dp_list).^2;
 %expt(n).variance_list   = 1./[4 1 0.25];
 %expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
-expt(n).cue_validity_list= linspace(0.1,0.9,9);
+expt(n).cue_validity_list= linspace(0.1,0.9,19);
 %expt(n).run_type		= run_type;
 
 % Experiment 2
@@ -94,12 +94,13 @@ plotExperimentResults(expt, results, 'cue_validity_list', 'cue validity')
 
 figure(4), subplot(1,3,1)
 hold on,% set(gca, 'ColorOrder', ColorSet);
-plot( expt.cue_validity_list.*100 ,...
+plot( expt.cue_validity_list ,...
 	results.validHR-results.invalidHR,...
-	'.-', 'LineWidth', 2, 'MarkerSize', 20)
+	'-', 'LineWidth', 2)%, 'MarkerSize', 20)
 ylim([-0.6 0.6])
 xlabel('cue validity')
 ylabel('cuing effect')
+set(gca,'XTick',[0:0.25:1])
 
 % text for fixed parameter
 fixed = sprintf(' N = %d', expt.set_size_list);
@@ -128,7 +129,7 @@ figure(4), subplot(1,3,2)
 hold on, %set(gca, 'ColorOrder', ColorSet);
 
 plot( expt.dp_list , results.validHR-results.invalidHR,...
-	'.-', 'LineWidth', 2, 'MarkerSize', 20)
+	'-', 'LineWidth', 2)%, 'MarkerSize', 20)
 ylim([0 0.6])
 xlabel('noise variance')
 ylabel('cuing effect')
@@ -193,6 +194,7 @@ jobCount	= 1;
 nJobs		= numel(expt.variance_list)*...
 	numel(expt.cue_validity_list)*...
 	numel(expt.set_size_list);
+
 % start parameter sweep
 for n=1:numel(expt.set_size_list)
 	N = expt.set_size_list(n);
@@ -311,6 +313,10 @@ nValidHits = 0;
 nValidPresent = 0;
 nInvalidHits = 0;
 nInvalidPresent = 0;
+
+% predefine 
+dPrior	= zeros(1,N+1);
+LLd		= zeros(1,N+1);
 
 for t=1:T
 	
