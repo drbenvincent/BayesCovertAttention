@@ -97,16 +97,17 @@ hold on,% set(gca, 'ColorOrder', ColorSet);
 plot( expt.cue_validity_list.*100 ,...
 	results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
-%ylim([0 1])
+ylim([-0.6 0.6])
 xlabel('cue validity')
-ylabel('cuing effect (HR_{valid}-HR_{invalid})')
+ylabel('cuing effect')
 
 % text for fixed parameter
-fixed = sprintf('N = %d', expt.set_size_list);
-bordertext('topleft', fixed);
+fixed = sprintf(' N = %d', expt.set_size_list);
+add_text_to_figure('TL',fixed, 15)
 
 legend(num2str(expt.variance_list'))
-legend('Location','NorthEast')
+legend('Location','SouthEast')
+legend boxoff
 
 drawnow
 
@@ -128,16 +129,17 @@ hold on, %set(gca, 'ColorOrder', ColorSet);
 
 plot( expt.dp_list , results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
-%ylim([0 1])
+ylim([0 0.6])
 xlabel('noise variance')
-ylabel('cuing effect (HR_{valid}-HR_{invalid})')
+ylabel('cuing effect')
 
 % text for fixed parameter
-fixed = sprintf('v = %1.1f', expt.cue_validity_list);
-bordertext('topleft', fixed);
+fixed = sprintf(' v = %1.1f', expt.cue_validity_list);
+add_text_to_figure('TL',fixed, 15)
 
 legend(num2str(expt.set_size_list'))
 legend('Location','NorthEast')
+legend boxoff
 
 drawnow
 
@@ -155,16 +157,20 @@ figure(4), subplot(1,3,3)
 hold on, %set(gca, 'ColorOrder', ColorSet);
 plot( expt.set_size_list , results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
-%ylim([0 1])
+ylim([0 0.6])
 xlabel('set size')
-ylabel('cuing effect (HR_{valid}-HR_{invalid})')
+ylabel('cuing effect')
 
 % text for fixed parameter
-fixed = sprintf('variance = %1.1f', expt.variance_list);
-bordertext('topleft', fixed);
+%fixed = sprintf('variance = %1.1f', expt.variance_list);
+% add_text_to_figure('TL',...
+% 	sprintf('\sigma ^2 = %1.1f', expt.variance_list),...
+% 	15)
+add_text_to_figure('TL',[' \sigma^2 = ' num2str(expt.variance_list)], 15)
 
 legend(num2str(expt.cue_validity_list'))
-legend('Location','NorthEast')
+legend('Location','SouthEast')
+legend boxoff
 
 drawnow
 
