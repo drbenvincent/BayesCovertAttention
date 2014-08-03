@@ -11,6 +11,7 @@ addpath([cd '/funcs/hline_vline'])
 addpath([cd '/funcs/export_fig'])
 addpath([cd '/funcs/latex_fig'])
 addpath([cd '/funcs/ColorBand'])
+addpath([cd '/funcs/bordertext'])
 plot_formatting_setup
 
 T = 50000;

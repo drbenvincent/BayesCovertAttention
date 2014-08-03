@@ -203,7 +203,8 @@ for n=1:numel(expt.set_size_list)
 		for cv = 1:numel(expt.cue_validity_list)
 			cue_validity = expt.cue_validity_list(cv);
 			
-			fprintf('job %d of %d: %s \n', jobCount, nJobs)
+			tic
+			fprintf('job %d of %d... ', jobCount, nJobs)
 			
 			% 			% run the main MCMC code with these parameters
 			% 			[validHR(n,cv,v), invalidHR(n,cv,v)]=...
@@ -214,6 +215,8 @@ for n=1:numel(expt.set_size_list)
 			
 			[~, ~, ~, ~, validHR(n,cv,v), invalidHR(n,cv,v)] = ...
 				cuedYesNoJob(N, sigmaT, sigmaD, expt.T, cue_validity);
+			
+			fprintf('%.0f simulated trials per second\n', expt.T/toc)
 			
 			jobCount = jobCount + 1;
 		end
