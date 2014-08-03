@@ -50,29 +50,29 @@ expt(3).results = EXPT3( expt(3) );
 %% save figures
 % Automatic resizing to make figure appropriate for font size
 latex_fig(11, 7, 4)
-% save as a .fig file
+
 codedir=cd;
 cd('../plots/nonMCMC')
 
 % save as figures
-figure(4), latex_fig(10, 8, 2)
-export_fig results_cued_yesno -png -pdf -m1
+figure(4), latex_fig(11, 7, 4)
 hgsave('results_cued_yesno')
+export_fig results_cued_yesno -pdf -png -m1
 
 figure(1), latex_fig(10, 8, 2)
-export_fig results_cued_yesnoEXPT1 -png -pdf -m1
 hgsave('results_cued_yesnoEXPT1')
+export_fig results_cued_yesnoEXPT1 -pdf -png -m1
 
 figure(2), latex_fig(10, 8, 2)
-export_fig results_cued_yesnoEXPT2 -png -pdf -m1
 hgsave('results_cued_yesnoEXPT2')
+export_fig results_cued_yesnoEXPT2 -pdf -png -m1
 
 figure(3), latex_fig(10, 8, 2)
-export_fig results_cued_yesnoEXPT3 -png -pdf -m1
 hgsave('results_cued_yesnoEXPT3')
-cd(codedir)
+export_fig results_cued_yesnoEXPT3 -pdf -png -m1
 
 cd(codedir)
+
 
 
 end
@@ -93,11 +93,13 @@ figure(1), clf
 plotExperimentResults(expt, results, 'cue_validity_list', 'cue validity')
 
 figure(4), subplot(1,3,1)
-hold on,% set(gca, 'ColorOrder', ColorSet);
+ColorSet = ColorBand(numel(expt.variance_list)); % define line colours
+hold on, set(gca, 'ColorOrder', ColorSet); 
 plot( expt.cue_validity_list ,...
 	results.validHR-results.invalidHR,...
 	'-', 'LineWidth', 2)%, 'MarkerSize', 20)
 ylim([-0.6 0.6])
+axis square
 xlabel('cue validity')
 ylabel('cuing effect')
 set(gca,'XTick',[0:0.25:1])
@@ -126,11 +128,13 @@ figure(2), clf
 plotExperimentResults(expt, results, 'dp_list', 'd''')
 
 figure(4), subplot(1,3,2)
-hold on, %set(gca, 'ColorOrder', ColorSet);
+ColorSet = ColorBand(numel(expt.set_size_list)); % define line colours
+hold on, set(gca, 'ColorOrder', ColorSet);
 
 plot( expt.dp_list , results.validHR-results.invalidHR,...
 	'-', 'LineWidth', 2)%, 'MarkerSize', 20)
 ylim([0 0.6])
+axis square
 xlabel('noise variance')
 ylabel('cuing effect')
 
@@ -155,10 +159,13 @@ figure(3), clf
 plotExperimentResults(expt, results, 'set_size_list', 'N')
 
 figure(4), subplot(1,3,3)
-hold on, %set(gca, 'ColorOrder', ColorSet);
+ColorSet = ColorBand(numel(expt.cue_validity_list)); % define line colours
+hold on, set(gca, 'ColorOrder', ColorSet);
 plot( expt.set_size_list , results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 ylim([0 0.6])
+set(gca,'XTick',[2:2:10])
+axis square
 xlabel('set size')
 ylabel('cuing effect')
 
