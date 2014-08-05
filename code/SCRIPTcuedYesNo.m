@@ -43,7 +43,7 @@ n=2;
 expt(n).TRIALS          = TRIALS;
 expt(n).cue_validity_list    = 0.7; % FIXED, single value
 expt(n).set_size_list   = [2 6];
-expt(n).dp_list			= linspace(0.1,5,20);
+expt(n).dp_list			= linspace(0.1,5,10);
 expt(n).variance_list	= (1./expt(n).dp_list).^2;
 %expt(n).variance_list   = [0.0625 0.125 0.25 0.5 1 2 4 8];
 %expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
@@ -65,9 +65,9 @@ expt(n).run_type		= run_type;
 
 %% RUN EXPERIMENTS
 
-expt(1).results = EXPT1( expt(1) );
+%expt(1).results = EXPT1( expt(1) );
 expt(2).results = EXPT2( expt(2) );
-expt(3).results = EXPT3( expt(3) );
+%expt(3).results = EXPT3( expt(3) );
 
 
 
@@ -289,6 +289,7 @@ drawnow
 			'LineWidth', 2, 'MarkerSize', 20)
 		xlabel(xlabeltext), ylabel(ylabeltext)
 		title(titleText)
+		axis square
 		
 		% append info
 		dt = datestr(now,'yyyy mmm dd, HH:MM AM');

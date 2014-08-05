@@ -3,10 +3,17 @@ code/funcs/export_fig/.ignore/*
 
 code/html
 
-plots/
 
 plots/testing/
 
 *.m~
 
 *.png
+
+*.fig
+
+*.pdf
+
+*.png
+
+*.pdf

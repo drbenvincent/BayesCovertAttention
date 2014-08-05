@@ -1,4 +1,4 @@
-function PC = yesno(T)
+function yesno(T)
 % yesno(1000)
 
 tic
@@ -16,7 +16,7 @@ for stdev = 1:numel(sigma_list)
 	
 	% CALCULATE PERFORMANCE FOR THESE PARAMETER VALUES ------------
 	[PC(stdev), HR(:,stdev), FAR(:,stdev), AUC(stdev)] = ...
-		yesnoPC(N, sigma, sigma, T);
+		yesnoJOB(N, sigma, sigma, T);
 	% -------------------------------------------------------------
 	
 end
@@ -55,7 +55,7 @@ for ss = 1:numel(size_sizes)
 		
 		% CALCULATE PERFORMANCE FOR THESE PARAMETER VALUES ------------
 		[PC(ss,stdev), ~, ~, AUC(ss,stdev)] = ...
-			yesnoPC(N, sigma, sigma, T);
+			yesnoJOB(N, sigma, sigma, T);
 		% -------------------------------------------------------------
 		
 	end
@@ -87,11 +87,11 @@ legend boxoff
 
 %% EXPERIMENT 3 - search assymmetry
 clear PC HR FAR AUC
-N = [2];
+N = [4];
 
 % CALCULATE PERFORMANCE FOR THESE PARAMETER VALUES ------------
-[AB_PC, AB_HR, AB_FAR, AB_AUC] = yesnoPC(N, sqrt(4), sqrt(1), T);
-[BA_PC, BA_HR, BA_FAR, BA_AUC] = yesnoPC(N, sqrt(1), sqrt(4), T);
+[AB_PC, AB_HR, AB_FAR, AB_AUC] = yesnoJOB(N, sqrt(4), sqrt(1), T);
+[BA_PC, BA_HR, BA_FAR, BA_AUC] = yesnoJOB(N, sqrt(1), sqrt(4), T);
 % -------------------------------------------------------------
 
 % Plot the results
@@ -110,12 +110,20 @@ legend boxoff
 
 min_sec(toc);
 
+codedir=cd;
+cd('../plots/nonMCMC')
+
 latex_fig(11, 7, 4)
+hgsave('results_yesno')
+export_fig results_yesno -pdf -png -m1
+
+cd(codedir)
+
 
 end
 
 
-function [PC, HR, FAR, AUC] = yesnoPC(N, sigmaT, sigmaD, T)
+function [PC, HR, FAR, AUC] = yesnoJOB(N, sigmaT, sigmaD, T)
 
 uniformDist = ones(1,N)/N;	
 prev=0.5;
@@ -144,12 +152,17 @@ for t=1:T
 	%% INFERENCE, now we know x
 	for n=1:N+1
 		% log likelihood of each value of D
-		LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
+		%LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
+		Ld(n) = prod( normpdf(x, xMu(n,:), sigma) );
 	end
-	logPosteriorD = LLd + log(dPrior);	% posterior
+	%logPosteriorD = LLd + log(dPrior);	% posterior
+	
+	PosteriorD = Ld .* dPrior;	% posterior
+	% normalise
+	PosteriorD = PosteriorD./sum(PosteriorD);
 	
 	%% DECISION
-	response = argmax(logPosteriorD);
+	response = argmax(PosteriorD);
 	response = response <= N;
 
  	D=argmax(d);
@@ -158,11 +171,11 @@ for t=1:T
 		correct = correct + 1;
 	end
 	
-	% convert into a normalised probability
-	postD=exp(logPosteriorD);
-	postD=postD./sum(postD);
+% 	% convert into a normalised probability
+% 	postD=exp(PosteriorD);
+% 	postD=postD./sum(postD);
 	
-	pPresent(t) = sum(postD([1:N]));
+	pPresent(t) = sum(PosteriorD([1:N]));
 	signalTrial(t) = actual;
 	
 end

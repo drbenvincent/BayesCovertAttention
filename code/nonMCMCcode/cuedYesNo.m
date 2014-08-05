@@ -51,7 +51,7 @@ expt(3).results = EXPT3( expt(3) );
 % Automatic resizing to make figure appropriate for font size
 latex_fig(11, 7, 4)
 
-codedir=cd;
+codedir=cd
 cd('../plots/nonMCMC')
 
 % save as figures
@@ -284,6 +284,7 @@ drawnow
 			'LineWidth', 2, 'MarkerSize', 20)
 		xlabel(xlabeltext), ylabel(ylabeltext)
 		title(titleText)
+		axis square
 		
 		% append info
 		dt = datestr(now,'yyyy mmm dd, HH:MM AM');
@@ -347,28 +348,43 @@ for t=1:T
 	%% INFERENCE, now we know x
 	for n=1:N+1
 		% log likelihood of each value of D
-		LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
+		%LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
+		% Likelihood
+		Ld(n) = prod( normpdf(x, xMu(n,:), sigma) );
 	end
-	logPosteriorD = LLd + log(dPrior);	% posterior
+	%logPosteriorD = LLd + log(dPrior);	% posterior
+	
+	PosteriorD = Ld .* dPrior;	% posterior
+	% normalise
+	PosteriorD = PosteriorD./sum(PosteriorD);
 	
 	%% DECISION
-	response = argmax(logPosteriorD);
-	response = response <= N;
+	% 	response = argmax(logPosteriorD);
+	% 	response = response <= N;
 	
+	% response
+	posterior_mode = argmax(PosteriorD);
+	if posterior_mode == N+1
+		response=0; % absent
+	else
+		response=1; % present
+	end
+	
+	%[response] = YesNoDecisionRule(logPosteriorD, N);
+
+	% WAS THE RESPONSE CORRECT?
 	D=argmax(d);
 	actual = D<=N;
 	if response==actual
 		correct = correct + 1;
 	end
 	
-	% convert into a normalised probability
-	postD=exp(logPosteriorD);
-	postD=postD./sum(postD);
-	
-	pPresent(t) = sum(postD([1:N]));
+
+	% This is the decision variable
+	pPresent(t) = sum(PosteriorD([1:N]));
 	signalTrial(t) = actual;
 	
-	% Is this a target-present, valud-cue trial?
+	% Is this a target-present, valid-cue trial?
 	if D<=N && argmax(c)==D
 		nValidPresent = nValidPresent+1;
 		% did the observer also get it right? A hit.

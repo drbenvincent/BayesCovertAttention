@@ -49,7 +49,7 @@ end
 
 
 
-
+mcmcparams	= define_mcmcparams(run_type, TRIALS);
 
 %% EXPERIMENT 1
 % Calculate ROC curves over a range of different internal noise levels
