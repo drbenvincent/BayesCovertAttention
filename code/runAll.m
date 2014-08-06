@@ -1,7 +1,7 @@
 % runAll
 
 
-opts.trials			= 10000;
+opts.trials			= 100;
 
 % options for non-MCMC evaluation
 opts.evalMethod		= 'nonMCMC';

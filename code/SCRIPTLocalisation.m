@@ -10,7 +10,7 @@
 %
 %%
 
-function SCRIPTLocalisation(run_type)
+function SCRIPTLocalisation(opts)
 % SCRIPTLocalisation('testing')
 %
 
@@ -30,28 +30,28 @@ T1=clock;
 %% Define parameters
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
+%
+% switch run_type
+% 	case{'testing'}
+% 		TRIALS				= 100; % number of trials to simulate it any one run
+% 		sp_list             = linspace(0,1,5);
+% 		variance_list		= 1./[4  1  0.25];
+%
+% 	case{'publication'}
+% 		TRIALS				= 50000; % number of trials to simulate it any one run
+% 		sp_list	= linspace(0,1,9);
+% 		variance_list		= 1./[4  1  0.25];
+% end
 
-switch run_type
-	case{'testing'}
-		TRIALS				= 100; % number of trials to simulate it any one run
-		sp_list             = linspace(0,1,5);
-		variance_list		= 1./[4  1  0.25];
-		
-	case{'publication'}
-		TRIALS				= 50000; % number of trials to simulate it any one run
-		sp_list	= linspace(0,1,9);
-		variance_list		= 1./[4  1  0.25];
-end
-
-mcmcparams = define_mcmcparams(run_type, TRIALS);
+%mcmcparams = define_mcmcparams(run_type, TRIALS);
 
 %% Run predictions for set size N=2
 N = 2;
-localisation_job(mcmcparams, N, TRIALS, sp_list, variance_list, 1)
+localisation_job(opts, N, 1)
 
 %% Run predictions for set size N=4
 N = 4;
-localisation_job(mcmcparams, N, TRIALS, sp_list, variance_list, 2)
+localisation_job(opts, N, 2)
 
 
 %% time
@@ -64,11 +64,11 @@ etime(T2,T1)/60 ;% time in mins
 latex_fig(11, 7, 4)
 
 codedir=cd;
-switch run_type
-	case{'testing'}
-		cd('../plots/testing')
-	case{'publication'}
-		cd('../plots')
+switch opts.evalMethod
+	case{'MCMC'}
+		cd('../plots/MCMC')
+	case{'nonMCMC'}
+		cd('../plots/nonMCMC')
 end
 
 % save as a .fig file
@@ -86,9 +86,13 @@ end
 
 %% Sub-function: predictions for a given set size, |N|
 
-function localisation_job(mcmcparams, N, TRIALS, sp_list, variance_list, subfig)
+function localisation_job(opts, N, subfig)
 
-dprime				= 1./variance_list;
+TRIALS			= opts.trials; % number of trials to simulate it any one run
+sp_list			= linspace(0,1,9);
+variance_list	= 1./[4  1  0.25];
+
+dprime			= 1./sqrt(variance_list);
 
 %%
 % Loop over a range of cue validities and $d'$ values and compute the
@@ -103,10 +107,21 @@ for v=1:numel(variance_list)
 		fprintf('job %d of %d: %s\n', jobcount,...
 			numel(variance_list)*numel(sp_list), datestr(now) )
 		
-		% create the spatial prior distribution
-		spdist = [sp , ones(1,N-1).*(1-sp)./(N-1)];
+
 		% run the main MCMClocalisation code with these parameters
-		PC(s,v) = MCMClocalisation(mcmcparams,N, spdist, variance, TRIALS);
+		%PC(s,v) = evaluateLocalisationMCMC(opts, N, spdist, variance);
+		
+		
+		switch opts.evalMethod
+			case{'MCMC'}
+				% create the spatial prior distribution
+				spdist = [sp , ones(1,N-1).*(1-sp)./(N-1)];
+				PC(s,v) = evaluateLocalisationMCMC(opts, N, spdist, variance);
+			case{'nonMCMC'}
+				sigma=sqrt(variance);
+				PC(s,v) = evaluateLocalisation(N, sigma, TRIALS, sp);
+		end
+		
 		
 		jobcount = jobcount + 1;
 	end
