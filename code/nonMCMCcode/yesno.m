@@ -7,16 +7,18 @@ figure(1), clf
 
 
 %% EXPERIMENT 1 - ROC curves for multiple noise leves
+display('Experiment 1')
 N = [2];
 variance_list = [0.25 1 4];
 sigma_list = sqrt(variance_list);
+prev=0.5;
 
 for stdev = 1:numel(sigma_list)
 	sigma = sigma_list(stdev);
 	
 	% CALCULATE PERFORMANCE FOR THESE PARAMETER VALUES ------------
 	[PC(stdev), HR(:,stdev), FAR(:,stdev), AUC(stdev)] = ...
-		yesnoJOB(N, sigma, sigma, T);
+		yesnoJOB(N, sigma, sigma, T, prev);
 	% -------------------------------------------------------------
 	
 end
@@ -41,10 +43,12 @@ title('Target/Distracter similarity','FontSize',16)
 
 
 %% EXPERIMENT 2 - set size effects, for multiple noise levels
-clear PC HR FAR AUC
+display('Experiment 2')
+clear PC HR FAR AUC prev
 size_sizes = [2 4 8 16];
 variance_list = [0.25 1 4];
 sigma_list = sqrt(variance_list);
+prev=0.5;
 
 % Run through all simulations
 for ss = 1:numel(size_sizes)
@@ -55,7 +59,7 @@ for ss = 1:numel(size_sizes)
 		
 		% CALCULATE PERFORMANCE FOR THESE PARAMETER VALUES ------------
 		[PC(ss,stdev), ~, ~, AUC(ss,stdev)] = ...
-			yesnoJOB(N, sigma, sigma, T);
+			yesnoJOB(N, sigma, sigma, T, prev);
 		% -------------------------------------------------------------
 		
 	end
@@ -86,12 +90,15 @@ legend boxoff
 
 
 %% EXPERIMENT 3 - search assymmetry
-clear PC HR FAR AUC
-N = [4];
-
+display('Experiment 3')
+clear PC HR FAR AUC prev
+N = 4;
+prev=0.5;
+varianceA = 4; sigmaA=sqrt(varianceA);
+varianceB = 1; sigmaB=sqrt(varianceB);
 % CALCULATE PERFORMANCE FOR THESE PARAMETER VALUES ------------
-[AB_PC, AB_HR, AB_FAR, AB_AUC] = yesnoJOB(N, sqrt(4), sqrt(1), T);
-[BA_PC, BA_HR, BA_FAR, BA_AUC] = yesnoJOB(N, sqrt(1), sqrt(4), T);
+[AB_PC, AB_HR, AB_FAR, AB_AUC] = yesnoJOB(N, sigmaA, sigmaB, T, prev);
+[BA_PC, BA_HR, BA_FAR, BA_AUC] = yesnoJOB(N, sigmaB, sigmaA, T, prev);
 % -------------------------------------------------------------
 
 % Plot the results
@@ -102,6 +109,7 @@ plot(AB_FAR,AB_HR,'k')
 hold on
 plot(BA_FAR,BA_HR,'k:')
 format_axis_ROC
+
 legend('\sigma^2_T = 4, \sigma^2_D = 1',...
     '\sigma^2_T = 1, \sigma^2_D = 4',...
     'location','SouthEast')
@@ -110,6 +118,7 @@ legend boxoff
 
 min_sec(toc);
 
+display('Saving')
 codedir=cd;
 cd('../plots/nonMCMC')
 
@@ -122,66 +131,3 @@ cd(codedir)
 
 end
 
-
-function [PC, HR, FAR, AUC] = yesnoJOB(N, sigmaT, sigmaD, T)
-
-uniformDist = ones(1,N)/N;	
-prev=0.5;
-dPrior([1:N]) = uniformDist*prev; % prior over each present location
-dPrior(N+1) = (1-prev); % prior for target absent
-
-xMu = eye(N+1);							% deterministic p(xmu|D)
-xMu = xMu(:,1:N);
-correct = 0;							% initialse number of correct trials
-
-pPresent = zeros(T,1); % preallocate
-signalTrial = zeros(T,1); % preallocate
-
-for t=1:T
-	
-	%% GENERATIVE
-	d = mnrnd(1,dPrior);				% sample display type
-	
-	sigma(d([1:N])==1)= sigmaT;				% sigma for targets
-	sigma(d([1:N])==0)= sigmaD;				% sigma for distractors.
-	
-	x = normrnd(d([1:N]),sigma);		% sample noisy observation
-	
-
-	
-	%% INFERENCE, now we know x
-	for n=1:N+1
-		% log likelihood of each value of D
-		%LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
-		Ld(n) = prod( normpdf(x, xMu(n,:), sigma) );
-	end
-	%logPosteriorD = LLd + log(dPrior);	% posterior
-	
-	PosteriorD = Ld .* dPrior;	% posterior
-	% normalise
-	PosteriorD = PosteriorD./sum(PosteriorD);
-	
-	%% DECISION
-	response = argmax(PosteriorD);
-	response = response <= N;
-
- 	D=argmax(d);
- 	actual = D<=N;
-	if response==actual
-		correct = correct + 1;
-	end
-	
-% 	% convert into a normalised probability
-% 	postD=exp(PosteriorD);
-% 	postD=postD./sum(postD);
-	
-	pPresent(t) = sum(PosteriorD([1:N]));
-	signalTrial(t) = actual;
-	
-end
-PC = correct/T;
-
-S = pPresent(signalTrial==1);
-N = pPresent(signalTrial==0);
-[HR, FAR, AUC]=ROC_calcHRandFAR_VECTORIZED(N,S);
-end

@@ -33,7 +33,7 @@ T1=clock;
 
 switch run_type
     case{'testing'}
-        TRIALS              = 100;
+        TRIALS              = 1000;
         list_of_variances   = 1./[4 1 0.25];
         dprime              = 1./list_of_variances; % <--- THIS IS INCORRECT
         size_sizes          = [2 4 8];
@@ -52,6 +52,7 @@ end
 mcmcparams	= define_mcmcparams(run_type, TRIALS);
 
 %% EXPERIMENT 1
+display('Experiment 1')
 % Calculate ROC curves over a range of different internal noise levels
 N = 2;
 for n=1:numel(list_of_variances)
@@ -85,6 +86,7 @@ title('Target/Distracter similarity','FontSize',16)
 
 
 %% EXPERIMENT 2
+display('Experiment 2')
 % Calculate AUC for a range of set sizes and internal noise levels
 
 %%
@@ -133,9 +135,10 @@ legend boxoff
 
 
 %% EXPERIMENT 3
+display('Experiment 3')
 % Search asymmetry
 
-N=4;
+N=2;
 % Define variance of item A and B
 varA = 4;
 varB = 1;
@@ -178,6 +181,7 @@ min_sec(etime(T2,T1));
 
 
 %% Export the figure 
+display('Saving')
 
 % Automatic resizing to make figure appropriate for font size
 latex_fig(11, 7, 4)
