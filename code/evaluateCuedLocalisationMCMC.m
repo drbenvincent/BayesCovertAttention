@@ -2,12 +2,12 @@
 %
 %%
 
-function [PC] = MCMCcuedLocalisation(mcmcparams, N, variance, cue_validity, TRIALS)
+function [PC] = evaluateCuedLocalisationMCMC(opts, N, variance, cue_validity, TRIALS)
 %  N=4; variance = 1; cue_validity=0.5; TRIALS =1000;
 
 %% Preliminaries
 JAGSmodel = 'JAGScuedlocalisation.txt';
-
+mcmcparams	= define_mcmcparams(opts);
 
 %% STEP 1: GENERATE SIMULATED DATASET
 % Place observed variables into the structure |params| to pass to JAGS
@@ -83,14 +83,14 @@ true_location = squeeze(dataset.D);
 %%
 % update some of the parameters
 params.x		= squeeze(dataset.x)';
-params.T		= TRIALS;
+params.T		= opts.trials;
 params.c		= squeeze(dataset.c)';
 
 %%
 % % Defining some MCMC parameters for JAGS
 
 for i=1:mcmcparams.infer.nchains
-    initial_param(i).D			= randi(params.N, TRIALS,1);
+    initial_param(i).D			= randi(params.N, opts.trials, 1);
 end
 
 %%
@@ -116,13 +116,13 @@ end
 % Extract the MCMC samples and use them to calculate the performance
 % (proportion correct, |PC|).
 
-for t=1:TRIALS
+for t=1:opts.trials
     D(t)		= mode( vec(samples.D(:,:,t)) );
 end
 
 % Examine the performance of the optimal observer
 Ncorrect = sum( D==true_location );
-[PC, PCI] = binofit(Ncorrect,TRIALS);
+[PC, PCI] = binofit(Ncorrect, opts.trials);
 
 
 return

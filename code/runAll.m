@@ -7,7 +7,7 @@ opts.trials			= 100;
 opts.evalMethod		= 'nonMCMC';
 
 % options for evaluating with MCMC. This is much slower.
-%opts.evalMethod	= 'MCMC';		opts.run_type='testing';
+opts.evalMethod	= 'MCMC';		opts.run_type='testing';
 
 
 
