@@ -3,9 +3,11 @@
 %%
 
 
-function [AUC, FAR, HR] = MCMCyesno(mcmcparams, N, varT, varD)
-% [AUC, FAR, HR] = MCMCyesno(2, 1, 4, 10000)
+function [AUC, FAR, HR] = evaluateYesNoMCMC(opts, N, varT, varD)
+% [AUC, FAR, HR] = evaluateYesNoMCMC(2, 1, 4, 10000)
 
+
+mcmcparams	= define_mcmcparams(opts);
 
 
 %% STEP 1: GENERATE SIMULATED DATASET (L,x)
