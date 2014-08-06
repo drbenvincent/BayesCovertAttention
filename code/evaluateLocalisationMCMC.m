@@ -2,12 +2,13 @@
 %
 %%
 
-function [PC] = MCMClocalisation(mcmcparams,N, Dprior, variance, TRIALS)
+function [PC] = evaluateLocalisationMCMC(opts, N, Dprior, variance)
 %  N=4; Dprior=[1/2 1/6 1/6 1/6]; variance = 1; TRIALS =100;
 
 %% Preliminaries
 JAGSmodel = 'JAGSlocalisation.txt';
-
+mcmcparams = define_mcmcparams(opts);
+TRIALS = opts.trials;
 
 %% STEP 1: GENERATE SIMULATED DATASET
 % Place observed variables into the structure |params| to pass to JAGS

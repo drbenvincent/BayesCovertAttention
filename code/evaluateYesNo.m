@@ -1,5 +1,7 @@
 
-function [PC, HR, FAR, AUC] = yesnoJOB(N, sigmaT, sigmaD, T, prev)
+function [PC, HR, FAR, AUC] = evaluateYesNo(opts, N, varT, varD, prev)
+
+T = opts.trials;
 
 uniformDist = ones(1,N)/N;	
 
@@ -9,6 +11,10 @@ dPrior(N+1) = (1-prev); % prior for target absent
 xMu = eye(N+1);							% deterministic p(xmu|D)
 xMu = xMu(:,1:N);
 correct = 0;							% initialse number of correct trials
+
+% work with std, not var
+sigmaT = sqrt(varT);
+sigmaD = sqrt(varD);
 
 sigmaTable(xMu==1) = sigmaT;
 sigmaTable(xMu==0) = sigmaD;

@@ -1,6 +1,6 @@
-function mcmcparams = define_mcmcparams(run_type, TRIALS)
+function mcmcparams = define_mcmcparams(opts)
 
-switch run_type
+switch opts.run_type
 	
 	case{'testing'}
 		
@@ -8,7 +8,7 @@ switch run_type
 		
 		mcmcparams.generate.nchains = 1;
 		mcmcparams.generate.nburnin = 1000;
-		mcmcparams.generate.nsamples = TRIALS; % number of simulated trials
+		mcmcparams.generate.nsamples = opts.trials; % number of simulated trials
 		
 		mcmcparams.infer.nchains = 4;
 		mcmcparams.infer.nburnin = 1000;
@@ -21,7 +21,7 @@ switch run_type
 		
 		mcmcparams.generate.nchains = 1;
 		mcmcparams.generate.nburnin = 1000;
-		mcmcparams.generate.nsamples = TRIALS; % number of simulated trials
+		mcmcparams.generate.nsamples = opts.trials; % number of simulated trials
 		
 		mcmcparams.infer.nchains = 4;
 		mcmcparams.infer.nburnin = 1000;

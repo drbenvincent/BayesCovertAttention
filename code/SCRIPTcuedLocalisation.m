@@ -10,7 +10,7 @@
 %
 %%
 
-function SCRIPTcuedLocalisation(run_type)
+function SCRIPTcuedLocalisation(opts)
 % SCRIPTcuedLocalisation('testing')
 
 %% Preliminaries
@@ -28,27 +28,30 @@ T1=clock;
 % Select parameters to use based on if we are quick testing (faster
 % computation times) or final runs (will take a while to compute).
 
-switch run_type
-    case{'testing'}
-        TRIALS				= 100; % number of trials to simulate it any one run
-        cue_validity_list	= linspace(0.001,1-0.001,5);
-        variance_list		= 1./[4  1  0.25];
-        
-    case{'publication'}
-        TRIALS				= 50000; % number of trials to simulate it any one run
-        cue_validity_list	= linspace(0.001,1-0.001,9);
-        variance_list		= 1./[4  1  0.25];
-end
+% switch run_type
+%     case{'testing'}
+%         TRIALS				= 100; % number of trials to simulate it any one run
+%         cue_validity_list	= linspace(0.001,1-0.001,5);
+%         variance_list		= 1./[4  1  0.25];
+%         
+%     case{'publication'}
+%         TRIALS				= 50000; % number of trials to simulate it any one run
+%         cue_validity_list	= linspace(0.001,1-0.001,9);
+%         variance_list		= 1./[4  1  0.25];
+% end
 
-mcmcparams = define_mcmcparams(run_type, TRIALS);
+cue_validity_list	= linspace(0.001,1-0.001,9);
+variance_list		= 1./[4  1  0.25];
+
+%mcmcparams = define_mcmcparams(run_type, TRIALS);
 
 %% Run predictions for set size N=2
 N = 2;
-cuedlocalisation_job(mcmcparams, N, TRIALS, cue_validity_list, variance_list, 1)
+cuedlocalisation_job(opts, N, cue_validity_list, variance_list, 1)
 
 %% Run predictions for set size N=4
 N = 4;
-cuedlocalisation_job(mcmcparams, N, TRIALS, cue_validity_list, variance_list, 2)
+cuedlocalisation_job(opts, N, cue_validity_list, variance_list, 2)
 
 
 %% time
@@ -63,11 +66,11 @@ latex_fig(11, 7, 4)
 
 % save as a .fig file
 codedir=cd;
-switch run_type
-	case{'testing'}
-		cd('../plots/testing')
-	case{'publication'}
-		cd('../plots')
+switch opts.evalMethod
+	case{'MCMC'}
+		cd('../plots/MCMC')
+	case{'nonMCMC'}
+		cd('../plots/nonMCMC')
 end
 hgsave('results_cued_localisation')
 export_fig results_cued_localisation -png -pdf -m1
@@ -82,9 +85,9 @@ end
 
 %% Sub-function: predictions for a given set size, |N|
 
-function cuedlocalisation_job(mcmcparams, N, TRIALS, cue_validity_list, variance_list, subfig)
+function cuedlocalisation_job(opts, N, cue_validity_list, variance_list, subfig)
 
-dprime				= 1./variance_list;
+dprime				= 1./sqrt(variance_list);
 
 %%
 % Loop over a range of cue validities and $d'$ values and compute the
@@ -99,8 +102,18 @@ for v=1:numel(variance_list)
 		fprintf('job %d of %d: %s\n', jobcount,...
 			numel(variance_list)*numel(cue_validity_list), datestr(now) )
 		% run the main MCMClocalisation code with these parameters
-		PC(cv,v) = MCMCcuedLocalisation(mcmcparams, N, variance, cue_validity, TRIALS);
 		
+		
+		switch opts.evalMethod
+			case{'MCMC'}
+				PC(cv,v) = evaluateCuedLocalisationMCMC(opts, N, variance, cue_validity);
+
+			case{'nonMCMC'}
+				sigma=sqrt(variance);
+				PC(cv,v) = evaluateCuedLocalisation(N, sigma, opts.trials, cue_validity);
+
+		end
+			
 		jobcount = jobcount + 1;
 	end
 end

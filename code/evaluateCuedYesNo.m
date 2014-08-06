@@ -1,4 +1,6 @@
-function [PC, HR, FAR, AUC, validHR, invalidHR] = cuedYesNoJob(N, sigmaT, sigmaD, T, cueValidity)
+function [PC, HR, FAR, AUC, validHR, invalidHR] = evaluateCuedYesNo(opts, N, sigmaT, sigmaD, cueValidity)
+
+T = opts.trials;
 
 uniformDist = ones(1,N)/N;				% prior over cue location
 prev=0.5;

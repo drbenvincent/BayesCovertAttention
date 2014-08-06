@@ -1,41 +1,5 @@
-function cuedLocalisation(T)
-% PC = cuedLocalisation(1000)
 
-tic
-
-%% set up variables for all simulations
-set_size_list = [2 4];
-sigma_list = [0.5 1 2];
-cueValidityList = linspace(0,1,21);
-
-%% Run through all simulations
-for ss = 1:numel(set_size_list)
-	N = set_size_list(ss);
-	
-	for stdev = 1:numel(sigma_list)
-		sigma = sigma_list(stdev);
-		
-		for v = 1:numel(cueValidityList)
-			expec = cueValidityList(v);
-			% CALCULATE PERFORMANCE FOR THESE PARAMETER VALUES ------------
-			PC(ss,stdev,v) = cuedLocalisationJob(N, sigma, T, expec);
-			% -------------------------------------------------------------
-		end
-	end
-	
-	% plot results for this set size
-	subplot(1, numel(set_size_list),ss)
-	plot(cueValidityList*100, squeeze(PC(ss,:,:))',...
-		'k-')
-	drawnow	
-end
-
-min_sec(toc);
-
-end
-
-
-function PC = cuedLocalisationJob(N, sigma, T, cueValidity)
+function PC = evaluateCuedLocalisation(N, sigma, T, cueValidity)
 
 uniformDist = ones(1,N)/N;				% prior over cue location
 xMu = eye(N);							% deterministic p(xmu|D)
