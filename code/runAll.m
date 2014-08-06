@@ -1,7 +1,7 @@
 % runAll
 
 
-opts.trials			= 100;
+opts.trials			= 10000;
 
 % options for non-MCMC evaluation
 opts.evalMethod		= 'nonMCMC';
@@ -14,6 +14,9 @@ opts.evalMethod		= 'nonMCMC';
 
 
 SCRIPTyesno(opts)
+
 SCRIPTcuedYesNo(opts)
+
 SCRIPTLocalisation(opts)
+
 SCRIPTcuedLocalisation(opts)

@@ -2,11 +2,12 @@
 %
 %%
 
-function [validHR, invalidHR] = MCMCcuedYesNo(mcmcparams, N, variance, cue_validity, TRIALS)
+function [validHR, invalidHR] = evaluateCuedYesNoMCMC(opts, N, variance, cue_validity)
 %  N=4; variance = 1; cue_validity=0.5; TRIALS =1000;
 
 %% Preliminaries
-JAGSmodel = 'JAGScueddetection.txt';
+JAGSmodel	= 'JAGScueddetection.txt';
+mcmcparams	= define_mcmcparams(opts);
 
 
 %% STEP 1: GENERATE SIMULATED DATASET
@@ -14,8 +15,8 @@ JAGSmodel = 'JAGScueddetection.txt';
 params.N 				= N;
 params.T                = 1;% simulate 1 trial, but generate many MCMC samples, see below
 params.v                = cue_validity;
-params.varT         = variance;
-params.varD         = variance;
+params.varT				= variance;
+params.varD				= variance;
 params.uniformdist      = ones(N,1)./N; % uniform distribution, for cue location
 
 %%
@@ -76,13 +77,13 @@ true_location = squeeze(dataset.D);
 %%
 % update some of the parameters
 params.x		= squeeze(dataset.x)';
-params.T		= TRIALS;
+params.T		= opts.trials;
 params.c		= squeeze(dataset.c)';
 
 %%
 % Set initial values for latent variable in each chain
 for i=1:mcmcparams.infer.nchains
-	initial_param(i).D			= randi(params.N+1, TRIALS,1);
+	initial_param(i).D			= randi(params.N+1, opts.trials, 1);
 end
 
 %%

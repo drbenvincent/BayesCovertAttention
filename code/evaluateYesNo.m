@@ -1,5 +1,5 @@
 
-function [PC, HR, FAR, AUC] = yesnoJOB(opts, N, varT, varD, prev)
+function [PC, HR, FAR, AUC] = evaluateYesNo(opts, N, varT, varD, prev)
 
 T = opts.trials;
 

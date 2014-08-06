@@ -15,9 +15,9 @@
 function SCRIPTyesno(opts)
 % SCRIPTyesno('testing')
 
-opts.evalMethod	= 'MCMC';		opts.run_type='testing';
-%opts.evalMethod		= 'nonMCMC';
-opts.trials			= 100;
+% opts.evalMethod	= 'MCMC';		opts.run_type='testing';
+% %opts.evalMethod		= 'nonMCMC';
+% opts.trials			= 100;
 
 %% Preliminaries
 close all; clc
@@ -94,11 +94,8 @@ for n=1:numel(variance_list)
 	
 	switch opts.evalMethod
 		case{'MCMC'}
-			
 			[~, FAR(:,n), HR(:,n)]	= evaluateYesNoMCMC(opts, N, variance,variance);
-			
 		case{'nonMCMC'}
-			
 			[PC(n), HR(:,n), FAR(:,n), AUC(n)] = ...
 				evaluateYesNo(opts, N, variance, variance, prev);
 	end
