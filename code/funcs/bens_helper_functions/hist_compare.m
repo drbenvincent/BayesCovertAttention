@@ -1,4 +1,9 @@
 function hist_compare(A,B,X)
+% Compare the distribution of 2 variables A and B.
+% The input X defines either the number of bins or a set of bin points.
+% e.g.
+% hist_compare(A,B,50)
+% hist_compare(A,B,linspace(0,1,50))
 
 if numel(X)==1
 	% then this is the number of bins
@@ -14,4 +19,4 @@ plot(X,yA,'r-')
 hold on
 plot(X,yB,'b-')
 
-
+return

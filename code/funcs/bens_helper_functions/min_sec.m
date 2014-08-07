@@ -47,17 +47,5 @@ switch shall_I_print
 		end
 end
 
-				
-				
-% 		if m>0 && m<60
-% 			fprintf('%2.0fmin %2.0fsec\n',m,s)
-% 		else if m
-% 			fprintf('%2.3f sec \n',s)
-% 		end
-% end
-
-			
-
-
 return
 

@@ -2,7 +2,7 @@
 %
 %%
 
-function [PC] = evaluateCuedLocalisationMCMC(opts, N, variance, cue_validity, TRIALS)
+function [PC] = evaluateCuedLocalisationMCMC(opts, N, variance, cue_validity)
 %  N=4; variance = 1; cue_validity=0.5; TRIALS =1000;
 
 %% Preliminaries

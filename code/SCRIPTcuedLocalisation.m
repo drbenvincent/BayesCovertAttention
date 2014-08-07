@@ -20,6 +20,8 @@ addpath([cd '/funcs/export_fig'])
 addpath([cd '/funcs/latex_fig'])
 addpath([cd '/funcs/hline_vline'])
 %addpath([cd '/funcs/ColorBand'])
+%addpath([cd '/funcs/bordertext'])
+addpath([cd '/funcs/bens_helper_functions'])
 % are we doing a quick run, or a proper long run?
 %run_type = 'testing'; % ['testing'|'publication']
 T1=clock;

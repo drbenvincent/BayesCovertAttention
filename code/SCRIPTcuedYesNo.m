@@ -20,7 +20,8 @@ addpath([cd '/funcs/latex_fig'])
 addpath([cd '/funcs/hline_vline'])
 plot_formatting_setup
 addpath([cd '/funcs/ColorBand'])
-addpath([cd '/funcs/bordertext'])
+%addpath([cd '/funcs/bordertext'])
+addpath([cd '/funcs/bens_helper_functions'])
 % are we doing a quick run, or a proper long run?
 %run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
@@ -144,7 +145,8 @@ ylabel('cuing effect (HR_{valid}-HR_{invalid})')
 
 % text for fixed parameter
 fixed = sprintf('N = %d', expt.set_size_list);
-bordertext('topleft', fixed);
+%bordertext('topleft', fixed);
+add_text_to_figure('TL',fixed, 15)
 
 legend(num2str(expt.variance_list'))
 legend('Location','NorthEast')
@@ -173,7 +175,7 @@ ylabel('cuing effect (HR_{valid}-HR_{invalid})')
 
 % text for fixed parameter
 fixed = sprintf('v = %1.1f', expt.cue_validity_list)
-bordertext('topleft', fixed);
+add_text_to_figure('TL',fixed, 15)
 
 legend(num2str(expt.set_size_list'))
 legend('Location','NorthEast')
@@ -200,7 +202,7 @@ ylabel('cuing effect (HR_{valid}-HR_{invalid})')
 
 % text for fixed parameter
 fixed = sprintf('variance = %1.1f', expt.variance_list);
-bordertext('topleft', fixed);
+add_text_to_figure('TL',fixed, 15)
 
 legend(num2str(expt.cue_validity_list'))
 legend('Location','NorthEast')
@@ -294,9 +296,9 @@ drawnow
 		title(titleText)
 		axis square
 		
-		% append info
-		dt = datestr(now,'yyyy mmm dd, HH:MM AM');
-		bordertext('figurebottomright', [mfilename ' ' dt]);
+% 		% append info
+% 		dt = datestr(now,'yyyy mmm dd, HH:MM AM');
+% 		bordertext('figurebottomright', [mfilename ' ' dt]);
 	end
 
 end
