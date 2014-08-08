@@ -7,7 +7,7 @@ close all
 %% define options
 switch eval_method
 	case{'MCMC'}
-		opts.trials		= 1000;
+		opts.trials		= 10000;
 		opts.evalMethod	= 'MCMC';
 		opts.run_type	= 'testing'; %either 'testing' or 'publication'
 		
