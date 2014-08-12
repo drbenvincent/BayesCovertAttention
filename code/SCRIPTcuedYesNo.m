@@ -234,7 +234,7 @@ for n=1:numel(expt.set_size_list)
 			
 			switch opts.evalMethod
 				case{'MCMC'}
-					[invalidHR(n,cv,v), validHR(n,cv,v)]	= ...
+					[validHR(n,cv,v), invalidHR(n,cv,v)]	= ...
 						evaluateCuedYesNoMCMC(opts, N, variance,cue_validity);
 				case{'nonMCMC'}
 					sigmaT=sqrt(variance);

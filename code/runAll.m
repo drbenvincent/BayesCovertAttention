@@ -14,7 +14,6 @@ switch eval_method
 	case{'nonMCMC'}
 		opts.trials		= 10000;
 		opts.evalMethod	= 'nonMCMC';
-		
 end
 
 %% Run all scripts 
