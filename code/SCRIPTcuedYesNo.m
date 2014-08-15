@@ -22,6 +22,7 @@ plot_formatting_setup
 addpath([cd '/funcs/ColorBand'])
 %addpath([cd '/funcs/bordertext'])
 addpath([cd '/funcs/bens_helper_functions'])
+addpath([cd '/funcs/legendflex'])
 % are we doing a quick run, or a proper long run?
 %run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
@@ -43,8 +44,8 @@ expt(n).cue_validity_list= linspace(0.1,0.9,9);
 n=2;
 expt(n).TRIALS          = opts.trials;
 expt(n).cue_validity_list    = 0.7; % FIXED, single value
-expt(n).set_size_list   = [2 6];
-expt(n).dp_list			= linspace(0.1,5,10);
+expt(n).set_size_list   = [2 4 6];
+expt(n).dp_list			= linspace(0.1,5,31);
 expt(n).variance_list	= (1./expt(n).dp_list).^2;
 %expt(n).variance_list   = [0.0625 0.125 0.25 0.5 1 2 4 8];
 %expt(n).dp_list			= 1./sqrt(expt(n).variance_list);
@@ -141,15 +142,24 @@ plot( expt.cue_validity_list.*100 ,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('cue validity')
-ylabel('cuing effect (HR_{valid}-HR_{invalid})')
-
+ylabel('cuing effect')
+set(gca, ...
+  'XLim',	[0 100], ...
+  'XTick',	0:25:100, ...
+  'YLim', 	[-0.5 0.5],...
+  'YTick',	-0.5:0.1:0.5)
 % text for fixed parameter
-fixed = sprintf('N = %d', expt.set_size_list);
+fixed = sprintf('set size = %d', expt.set_size_list);
 %bordertext('topleft', fixed);
 add_text_to_figure('TL',fixed, 15)
 
-legend(num2str(expt.variance_list'))
-legend('Location','NorthEast')
+legendflex(cellstr(num2str(expt.variance_list')),...
+	'title', '\sigma^2',...
+	'anchor',{'se' 'se'},...
+	'box', 'off')
+
+%legend(num2str(expt.variance_list'))
+%legend('Location','NorthEast')
 
 drawnow
 
@@ -171,14 +181,25 @@ plot( expt.dp_list , results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('noise variance')
-ylabel('cuing effect (HR_{valid}-HR_{invalid})')
+ylabel('cuing effect')
+set(gca, ...
+  'XLim',	[0 5], ...
+  'XTick',	0:1:5, ...
+  'YLim', 	[0 0.5],...
+  'YTick',	0:0.1:0.5)
 
 % text for fixed parameter
 fixed = sprintf('v = %1.1f', expt.cue_validity_list)
 add_text_to_figure('TL',fixed, 15)
 
-legend(num2str(expt.set_size_list'))
-legend('Location','NorthEast')
+legendflex(cellstr(num2str(expt.set_size_list')),...
+	'title', 'N',...
+	'anchor',{'ne' 'ne'},...
+	'box', 'off')
+% legend(num2str(expt.set_size_list'))
+% legend('Location','NorthEast')
+
+
 
 drawnow
 
@@ -198,14 +219,27 @@ plot( expt.set_size_list , results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('set size')
-ylabel('cuing effect (HR_{valid}-HR_{invalid})')
+ylabel('cuing effect')
+set(gca, ...
+  'XLim',	[1 10], ...
+  'XTick',	2:2:10, ...
+  'YLim', 	[0 0.5],...
+  'YTick',	0:0.1:0.5)
+
 
 % text for fixed parameter
 fixed = sprintf('variance = %1.1f', expt.variance_list);
-add_text_to_figure('TL',fixed, 15)
+%add_text_to_figure('TL',fixed, 15)
+add_text_to_figure('TL',['\sigma^2=' num2str(1)], 15)
 
-legend(num2str(expt.cue_validity_list'))
-legend('Location','NorthEast')
+legendflex(cellstr(num2str(expt.cue_validity_list')),...
+	'title', 'v',...
+	'anchor',{'se' 'se'},...
+	'box', 'off')
+
+%legend(num2str(expt.cue_validity_list'))
+%legend('Location','SouthEast')
+
 
 drawnow
 

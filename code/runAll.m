@@ -1,6 +1,6 @@
 function runAll(eval_method)
-% runAll('nonMCMC')
-% runAll('MCMC')
+% runAll('nonMCMC') % FAST
+% runAll('MCMC')	% SLOW
 
 close all
 
@@ -12,7 +12,7 @@ switch eval_method
 		opts.run_type	= 'testing'; %either 'testing' or 'publication'
 		
 	case{'nonMCMC'}
-		opts.trials		= 10000;
+		opts.trials		= 100000;
 		opts.evalMethod	= 'nonMCMC';
 end
 

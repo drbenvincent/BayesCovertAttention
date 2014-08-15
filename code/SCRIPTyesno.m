@@ -29,6 +29,7 @@ addpath([cd '/funcs/ColorBand'])
 addpath([cd '/funcs/hline_vline'])
 %addpath([cd '/funcs/bordertext'])
 addpath([cd '/funcs/bens_helper_functions'])
+addpath([cd '/funcs/legendflex'])
 plot_formatting_setup
 % are we doing a quick run, or a proper long run?
 % run_type = 'testing'; % ['testing'|'publication']
@@ -50,7 +51,7 @@ min_sec(etime(T2,T1));
 display('Saving')
 
 % Automatic resizing to make figure appropriate for font size
-latex_fig(11, 7, 4)
+figure(1), latex_fig(11, 7, 4)
 
 % save as a .fig file
 codedir=cd;
@@ -62,10 +63,10 @@ switch opts.evalMethod
 end
 
 % save as a .fig file
-hgsave('results_detection')
+hgsave('results_yesno')
 
 % save as a .pdf and png file
-export_fig results_detection -png -pdf -m1
+export_fig results_yesno -png -pdf -m1
 
 cd(codedir)
 
@@ -107,16 +108,19 @@ end
 
 ColorSet = ColorBand(numel(variance_list)); % define line colours
 
-figure(1)
+figure(1), latex_fig(11, 7, 4)
 subplot(1,3,1)
 hold all
 set(gca, 'ColorOrder', ColorSet);
 plot(FAR,HR)
 format_axis_ROC
-legend('4, 1', '1, 4')
-legend(num2str(dprime_list'),...
-	'location','SouthEast')
-legend boxoff
+% legend(num2str(dprime_list'),...
+% 	'location','SouthEast')
+% legend boxoff
+legendflex(cellstr(num2str(dprime_list')),...
+	'title', 'd''',...
+	'anchor',{'se' 'se'},...
+	'box', 'off')
 title('Target/Distracter similarity','FontSize',16)
 return
 
@@ -182,9 +186,13 @@ ylabel('AUC')
 axis([1 max(size_sizes) 0.5 1])
 set(gca,'XTick',size_sizes)
 
-legend(num2str(dprime_list'),...
-	'location','NorthEast')
-legend boxoff
+legendflex(cellstr(num2str(dprime_list')),...
+	'title', 'd''',...
+	'anchor',{'ne' 'ne'},...
+	'box', 'off')
+% legend(num2str(dprime_list'),...
+% 	'location','NorthEast')
+% legend boxoff
 return
 
 
@@ -240,5 +248,30 @@ legend('\sigma^2_T = 4, \sigma^2_D = 1',...
 	'\sigma^2_T = 1, \sigma^2_D = 4',...
 	'location','SouthEast')
 legend boxoff
+
+%% plot in Z-coordinates
+figure
+title('Search asymmetry','FontSize',16)
+plot(Z(AB_FAR), Z(AB_HR),'k')
+hold on
+plot(Z(BA_FAR), Z(BA_HR),'r-')
+axis([-3 3 -3 3])
+legend('\sigma^2_T = 4, \sigma^2_D = 1',...
+	'\sigma^2_T = 1, \sigma^2_D = 4',...
+	'location','SouthEast')
+legend boxoff
+axis square
+set(gca, 'XTick', [-3:1:3],...
+	'YTick', [-3:1:3]);
+xlabel('z(FAR)')
+ylabel('z(HR)')
+
+ABslope = slope_in_Z_space(AB_FAR, AB_HR)
+BAslope = slope_in_Z_space(BA_FAR, BA_HR)
+
+add_text_to_figure('TL',...
+	sprintf('AB slope = %2.2f\nBA slope = %2.2f', ABslope, BAslope),...
+	15)
+
 return
 
