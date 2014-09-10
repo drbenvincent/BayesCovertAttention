@@ -12,7 +12,8 @@ switch eval_method
 		opts.run_type	= 'testing'; %either 'testing' or 'publication'
 		
 	case{'nonMCMC'}
-		opts.trials		= 100000;
+		%opts.trials		= 100000;
+		opts.trials		= 1000000;
 		opts.evalMethod	= 'nonMCMC';
 end
 

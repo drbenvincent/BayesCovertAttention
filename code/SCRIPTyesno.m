@@ -35,7 +35,7 @@ plot_formatting_setup
 % run_type = 'testing'; % ['testing'|'publication']
 
 
-%%
+%% Calculate predictions for each 3 simulated experiments
 T1=clock;
 
 experiment1(opts)

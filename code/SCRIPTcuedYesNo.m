@@ -9,20 +9,20 @@ function SCRIPTcuedYesNo(opts)
 %% Preliminaries
 %clear,
 %close all;
-figure(4), clf
 clc
 set(0,'DefaultFigureWindowStyle','normal') % 'docked' or 'normal'
+figure(4), clf, latex_fig(10, 8, 2)
 
 % add paths to dependencies
 addpath([cd '/funcs'])
 addpath([cd '/funcs/export_fig'])
 addpath([cd '/funcs/latex_fig'])
 addpath([cd '/funcs/hline_vline'])
-plot_formatting_setup
 addpath([cd '/funcs/ColorBand'])
 %addpath([cd '/funcs/bordertext'])
 addpath([cd '/funcs/bens_helper_functions'])
 addpath([cd '/funcs/legendflex'])
+plot_formatting_setup
 % are we doing a quick run, or a proper long run?
 %run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
@@ -178,7 +178,7 @@ figure(4), subplot(1,3,2)
 hold on, %set(gca, 'ColorOrder', ColorSet);
 
 plot( expt.dp_list , results.validHR-results.invalidHR,...
-	'.-', 'LineWidth', 2, 'MarkerSize', 20)
+	'-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('noise variance')
 ylabel('cuing effect')
