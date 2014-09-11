@@ -23,7 +23,7 @@ T1=clock;
 
 clc
 set(0,'DefaultFigureWindowStyle','normal') % 'docked' or 'normal'
-figure(4), clf, latex_fig(10, 8, 2)
+figure(4), clf, latex_fig(11, 7, 4)
 
 %% Define parameters
 
@@ -101,19 +101,19 @@ switch opts.evalMethod
 end
 
 % save as figures
-figure(4), latex_fig(10, 8, 2)
+figure(4), latex_fig(11, 7, 4)
 export_fig results_cued_yesno -png -pdf -m1
 hgsave('results_cued_yesno')
 
-figure(1), latex_fig(10, 8, 2)
+figure(1), latex_fig(11, 7, 4)
 export_fig results_cued_yesnoEXPT1 -png -pdf -m1
 hgsave('results_cued_yesnoEXPT1')
 
-figure(2), latex_fig(10, 8, 2)
+figure(2), latex_fig(11, 7, 4)
 export_fig results_cued_yesnoEXPT2 -png -pdf -m1
 hgsave('results_cued_yesnoEXPT2')
 
-figure(3), latex_fig(10, 8, 2)
+figure(3), latex_fig(11, 7, 4)
 export_fig results_cued_yesnoEXPT3 -png -pdf -m1
 hgsave('results_cued_yesnoEXPT3')
 
@@ -146,6 +146,7 @@ set(gca, ...
   'XTick',	0:25:100, ...
   'YLim', 	[-0.5 0.5],...
   'YTick',	-0.5:0.1:0.5)
+axis square
 % text for fixed parameter
 fixed = sprintf('set size = %d', expt.set_size_list);
 %bordertext('topleft', fixed);
@@ -185,7 +186,7 @@ set(gca, ...
   'XTick',	0:1:5, ...
   'YLim', 	[0 0.5],...
   'YTick',	0:0.1:0.5)
-
+axis square
 % text for fixed parameter
 fixed = sprintf('v = %1.1f', expt.cue_validity_list)
 add_text_to_figure('TL',fixed, 15)
@@ -218,6 +219,7 @@ plot( expt.set_size_list , results.validHR-results.invalidHR,...
 %ylim([0 1])
 xlabel('set size')
 ylabel('cuing effect')
+axis square
 set(gca, ...
   'XLim',	[1 10], ...
   'XTick',	2:2:10, ...
