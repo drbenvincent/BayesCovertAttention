@@ -7,12 +7,6 @@ function SCRIPTcuedYesNo(opts)
 % SCRIPTcuedYesNo(50000, 'publication')
 
 %% Preliminaries
-%clear,
-%close all;
-clc
-set(0,'DefaultFigureWindowStyle','normal') % 'docked' or 'normal'
-figure(4), clf, latex_fig(10, 8, 2)
-
 % add paths to dependencies
 addpath([cd '/funcs'])
 addpath([cd '/funcs/export_fig'])
@@ -26,6 +20,10 @@ plot_formatting_setup
 % are we doing a quick run, or a proper long run?
 %run_type = 'testing'; % ['testing'|'publication']
 T1=clock;
+
+clc
+set(0,'DefaultFigureWindowStyle','normal') % 'docked' or 'normal'
+figure(4), clf, latex_fig(10, 8, 2)
 
 %% Define parameters
 
@@ -44,7 +42,7 @@ expt(n).cue_validity_list= linspace(0.1,0.9,9);
 n=2;
 expt(n).TRIALS          = opts.trials;
 expt(n).cue_validity_list    = 0.7; % FIXED, single value
-expt(n).set_size_list   = [2 4 6];
+expt(n).set_size_list   = [2 4];
 expt(n).dp_list			= linspace(0.1,5,31);
 expt(n).variance_list	= (1./expt(n).dp_list).^2;
 %expt(n).variance_list   = [0.0625 0.125 0.25 0.5 1 2 4 8];
