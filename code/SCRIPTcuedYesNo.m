@@ -133,11 +133,13 @@ results = doParameterSweep(expt, opts);
 figure(1), clf
 plotExperimentResults(expt, results, 'cue_validity_list', 'cue validity')
 
+ColorSet=[0 0 0;0.6 0.6 0.6];
+
 figure(4), subplot(1,3,1)
-hold on,% set(gca, 'ColorOrder', ColorSet);
+hold on, set(gca, 'ColorOrder', ColorSet);
 plot( expt.cue_validity_list.*100 ,...
 	results.validHR-results.invalidHR,...
-	'.-', 'LineWidth', 2, 'MarkerSize', 20)
+	'-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
 xlabel('cue validity')
 ylabel('cuing effect')
@@ -173,8 +175,10 @@ figure(2), clf
 %plotExperimentResults(expt, results, 'variance_list', '\sigma ^2')
 plotExperimentResults(expt, results, 'dp_list', 'd''')
 
+ColorSet=[0 0 0;0.6 0.6 0.6];
+
 figure(4), subplot(1,3,2)
-hold on, %set(gca, 'ColorOrder', ColorSet);
+hold on, set(gca, 'ColorOrder', ColorSet);
 
 plot( expt.dp_list , results.validHR-results.invalidHR,...
 	'-', 'LineWidth', 2, 'MarkerSize', 20)
@@ -188,7 +192,7 @@ set(gca, ...
   'YTick',	0:0.1:0.5)
 axis square
 % text for fixed parameter
-fixed = sprintf('v = %1.1f', expt.cue_validity_list)
+fixed = sprintf('cue validity = %1.1f', expt.cue_validity_list)
 add_text_to_figure('TL',fixed, 15)
 
 legendflex(cellstr(num2str(expt.set_size_list')),...
@@ -212,8 +216,10 @@ results = doParameterSweep(expt, opts);
 figure(3), clf
 plotExperimentResults(expt, results, 'set_size_list', 'N')
 
+ColorSet=[0 0 0;0.6 0.6 0.6];
+
 figure(4), subplot(1,3,3)
-hold on, %set(gca, 'ColorOrder', ColorSet);
+hold on, set(gca, 'ColorOrder', ColorSet);
 plot( expt.set_size_list , results.validHR-results.invalidHR,...
 	'.-', 'LineWidth', 2, 'MarkerSize', 20)
 %ylim([0 1])
@@ -233,7 +239,7 @@ fixed = sprintf('variance = %1.1f', expt.variance_list);
 add_text_to_figure('TL',['\sigma^2=' num2str(1)], 15)
 
 legendflex(cellstr(num2str(expt.cue_validity_list')),...
-	'title', 'v',...
+	'title', 'cue validity',...
 	'anchor',{'se' 'se'},...
 	'box', 'off')
 
