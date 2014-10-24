@@ -30,7 +30,7 @@ LLd		= zeros(1,N+1);
 
 for t=1:T
 	
-	%% GENERATIVE
+	%% STEP 1: GENERATIVE
 	c = mnrnd(1,uniformDist);			% sample cue location
 	
 	% define the prior over display types as a function of cue location
@@ -47,7 +47,7 @@ for t=1:T
 	
 	
 	
-	%% INFERENCE, now we know x
+	%% STEP 2: INFERENCE, now we know x
 	for n=1:N+1
 		% log likelihood of each value of D
 		%LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
@@ -64,7 +64,7 @@ for t=1:T
 	% normalise
 	PosteriorD = PosteriorD./sum(PosteriorD);
 	
-	%% DECISION
+	%% STEP 3: DECISION
 	% 	response = argmax(logPosteriorD);
 	% 	response = response <= N;
 	

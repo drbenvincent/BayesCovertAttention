@@ -9,18 +9,18 @@ correct = 0;							% initialse number of correct trials
 
 for t=1:T
 	
-	%% GENERATIVE
+	%% STEP 1: GENERATIVE
 	d = mnrnd(1,dPrior);				% sample display type
 	x = normrnd(d,sigma);				% sample noisy observation
 	
-	%% INFERENCE, now we know x
+	%% step 2: INFERENCE, now we know x
 	for n=1:N
 		% log likelihood of each value of D
 		LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
 	end
 	logPosteriorD = LLd + log(dPrior);	% posterior
 	
-	%% DECISION
+	%% STEP 3: DECISION
 	response = argmax(logPosteriorD);
 	if response == argmax(d)
 		correct = correct + 1;

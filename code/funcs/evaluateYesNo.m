@@ -25,7 +25,7 @@ signalTrial = zeros(T,1); % preallocate
 
 for t=1:T
 	
-	%% GENERATIVE
+	%% STEP 1: GENERATIVE
 	d = mnrnd(1,dPrior);				% sample display type
 	
 	sigma(d([1:N])==1)= sigmaT;				% sigma for targets
@@ -35,7 +35,7 @@ for t=1:T
 	
 
 	
-	%% INFERENCE, now we know x
+	%% STEP 2: INFERENCE, now we know x
 	for n=1:N+1
 		% log likelihood of each value of D
 		%LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
@@ -59,7 +59,7 @@ for t=1:T
 	PosteriorD = Ld .* dPrior;					% posterior
 	PosteriorD = PosteriorD./sum(PosteriorD);	% normalise
 	
-	%% DECISION
+	%% STEP 3: DECISION
 	pPresent(t) = sum(PosteriorD([1:N]));
 		
 	if pPresent(t)>=0.5
