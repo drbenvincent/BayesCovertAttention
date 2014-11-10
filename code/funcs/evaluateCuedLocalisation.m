@@ -18,9 +18,12 @@ for t=1:T
 	x = normrnd(d,sigma);				% sample noisy observation
 	
 	%% STEP 2: INFERENCE: what is an optimal observer's response?
-	for n=1:N
+	% The observer is calculating the joint probability of P(D,c,v,x,sigma,dprior)
+	% It will do this by evaluating the joint probability over all N
+	% categorical values of D (display type)
+	for dparam=1:N
 		% log probability of each display type
-		LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
+		LLd(ndparam) = sum( log( normpdf(x, xMu(dparam,:), sigma) ));
 	end
 	logPosteriorD = LLd + log(dPrior);	% posterior
 	

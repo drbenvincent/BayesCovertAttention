@@ -14,9 +14,12 @@ for t=1:T
 	x = normrnd(d,sigma);				% sample noisy observation
 	
 	%% step 2: INFERENCE, now we know x
-	for n=1:N
+	% The observer is calculating the joint probability of P(D,x,sigma,dprior)
+	% It will do this by evaluating the joint probability over all N
+	% categorical values of D (display type)
+	for dparam=1:N
 		% log likelihood of each value of D
-		LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
+		LLd(dparam) = sum( log( normpdf(x, xMu(dparam,:), sigma) ));
 	end
 	logPosteriorD = LLd + log(dPrior);	% posterior
 	

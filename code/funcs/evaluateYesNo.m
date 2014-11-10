@@ -32,29 +32,15 @@ for t=1:T
 	sigma(d([1:N])==0)= sigmaD;				% sigma for distractors.
 	
 	x = normrnd(d([1:N]),sigma);		% sample noisy observation
-	
 
-	
 	%% STEP 2: INFERENCE, now we know x
-	for n=1:N+1
-		% log likelihood of each value of D
-		%LLd(n) = sum( log( normpdf(x, xMu(n,:), sigma) ));
+	% The observer is calculating the joint probability of P(D,x,sigmaT,sigmaD,dprior)
+	% It will do this by evaluating the joint probability over all N+1
+	% categorical values of D (display type)
 	
-		
-		%Ld(n) = prod( normpdf(x, xMu(n,:), sigma) ); % <---- old wrong line
-		
-		
-		
-		% *** PROBLEM FOUND *** 
-		% The observer does not actually know the sigma of each location
-		% because it doesn't KNOW where the target is. Therefore I think
-		% this approach is not doable. It may well be, but we'd have to
-		% integrate over
-		
-		% new
-		Ld(n) = prod( normpdf(x, xMu(n,:), sigmaTable(n,:)) );
+	for dparam=1:N+1 % loop over each possible display type 
+		Ld(dparam) = prod( normpdf(x, xMu(dparam,:), sigmaTable(dparam,:)) );
 	end
-	%logPosteriorD = LLd + log(dPrior);	% posterior
 	
 	PosteriorD = Ld .* dPrior;					% posterior
 	PosteriorD = PosteriorD./sum(PosteriorD);	% normalise
@@ -67,28 +53,21 @@ for t=1:T
 	else
 		response=0;
 	end
-% 	response = argmax(PosteriorD);
-% 	response = response <= N;
-% 
   	
 	D=argmax(d);		% what is the actual display type
   	actual = D<=N;		% is the display type present (1) or absent (0)
 	if response==actual
 		correct = correct + 1;
 	end
-	
-
-	
-	%actual = D<=N;
+		
+	% binary label of whether this is a signal trial
 	signalTrial(t) = actual;
-	
-	
-	D=argmax(d);
+
+	%D=argmax(d);
  	
 	if response==actual
 		correct = correct + 1;
 	end
-	
 	
 end
 PC = correct/T;
