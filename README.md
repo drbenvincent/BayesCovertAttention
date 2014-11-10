@@ -25,10 +25,13 @@ into the Matlab command window. If the Matlab parallel toolbox is available, the
 During the development of the code it was useful to have an options flag to choose between a large number of simulated trials of the optimal observer, and a low number for testing purposes. To check the code works, the flag should be set as `run_type='testing'` in the file `runAll.m`. More accurate optimal observer performance is calculated by simulating more trials, by setting `run_type='publication'`, or one can make manual adjustments to variable `TRIALS`. This is the number of simulated experimental trials for each condition.
 
 
-## Implementation 2: Monte-Carlo, but not MCMC
+## Implementation 2: Grid approximation	
+This implementation is fast to compute. The code is also potentially easier to understand. No additional files are required, eg. no JAGS.
+
+Grid approximation is used for the observer's inferences about the display type on each trial. Because the display type is a categorical variable, and the number of display types is quite low, we can compute the joint distribution using grid approximation over the display types. This uses the fact that we can decompose the joint distribution of the probabilistic generative model down into the product of simple posteriors of node values conditional upon their parent node values.
 An alternative, faster, implementation is also provided, which does not use MCMC methods. While the code here could be optimised further for speed, I chose to provide code maximising readability. 
 
-This implementation is simpler, easier, and faster to run, with no additional installation of file dependencies. Having set the `code` folder as the path in Matlab, the predictions for all models can be computed by entering the command
+Having set the `code` folder as the path in Matlab, the predictions for all models can be computed by entering the command
 
 `runAll('nonMCMC')`
 
