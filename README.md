@@ -1,10 +1,12 @@
 # BayesCovertAttention
 
+**PRE-RELEASE CODE: Please respect that the research paper associated with this code is under revision. The code is made available now to aid the reviewers. Citation information for the paper will be available if the paper is accepted for publication.**
+
+**THIS CODE IS ALSO UNDER LICENCE: see LICENCE.TXT**
 
 Code associated with the paper **Vincent (submitted) [Bayesian accounts of covert selective attention: a tutorial review]()**.
 
 The code here provides TWO separate ways of practically evaluating the models. Two methods were used to gain confidence that any implementation errors have been eliminated.
-
 
 ## Implementation 1: MCMC
 
