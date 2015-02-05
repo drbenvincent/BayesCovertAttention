@@ -1,14 +1,14 @@
 # BayesCovertAttention
 
-**This code is also under licence: see LICENCE.txt**
+**This code is also under licence: see LICENCE.txt.** 
 
-Code associated with the paper: 
+This is the Matlab code associated with my paper: 
 
-**Vincent (in press) [Bayesian accounts of covert selective attention: A tutorial review]() Attention, Perception, & Psychophysics. DOI: 10.3758/s13414-014-0830-0 **
+Vincent (in press) [Bayesian accounts of covert selective attention: A tutorial review]() Attention, Perception, & Psychophysics. DOI: 10.3758/s13414-014-0830-0
 
 If you find the paper and/or code useful, the best way to thank me is by citing me :)
 
-## Problems, suggests?
+## Problems, suggestions?
 Hopefully the code I provide here will be of use to people. If you have problems or require clarifications then I will try to be as responsive as possible. My preferred way of dealing with request is for you to create a GitHub issue. But feel free to email as well.
 
 ## Overview
