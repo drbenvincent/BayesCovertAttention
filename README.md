@@ -1,4 +1,4 @@
-# BayesCovertAttention
+# Bayesian accounts of covert selective attention: A tutorial review
 
 **This code is also under licence: see LICENCE.txt.** 
 
