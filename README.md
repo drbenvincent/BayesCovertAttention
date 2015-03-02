@@ -2,7 +2,7 @@
 
 Matlab code associated with the paper:
 
-> Vincent (in press) [Bayesian accounts of covert selective attention: A tutorial review]() Attention, Perception, & Psychophysics. DOI: 10.3758/s13414-014-0830-0
+> Vincent (2015) [Bayesian accounts of covert selective attention: A tutorial review]() Attention, Perception, & Psychophysics. do:10.3758/s13414-014-0830-0
 
 If you find the paper and/or code useful, the best way to thank me is by citing me :) 
 
